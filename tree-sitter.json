@@ -6,9 +6,7 @@
       "camelcase": "Fluent",
       "title": "Fluent",
       "scope": "source.fluent",
-      "file-types": [
-        "ftl"
-      ],
+      "file-types": ["ftl"],
       "injection-regex": "^fluent$",
       "class-name": "TreeSitterFluent"
     }
