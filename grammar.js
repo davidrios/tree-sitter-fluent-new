@@ -17,54 +17,63 @@ module.exports = grammar({
   extras: ($) => [],
 
   rules: {
-    source_file: ($) =>
-      seq(
-        repeat($._blank_line),
-        repeat(seq($._definition, $._line_break, repeat($._blank_line))),
-        optional($._definition),
+    debug: ($) => repeat(choice($.blank_lines, 'a', 'aaa')),
+    blank_lines: ($) => prec.right(repeat1($._blank_line)),
+    source_file: ($) => seq(repeat(/\s/), repeat($._definition)),
+
+    _comment_content: ($) => /[^\n]+/,
+    comment: ($) => seq('#', optional($._comment_content)),
+    group_comment: ($) => seq('##', optional($._comment_content)),
+    file_comment: ($) => seq('###', optional($._comment_content)),
+
+    _definition: ($) =>
+      choice(
+        prec.left(1, $.comment),
+        // prec.left(1, choice($.group_comment, '\n')),
+        // prec.left(1, choice($.file_comment, '\n')),
+        prec.left(2, $.message),
+        prec.left(3, $.message_with_comment),
       ),
 
-    _definition: ($) => choice($.message),
+    message: ($) =>
+      prec.left(
+        seq(
+          choice($.identifier, $.term),
+          repeat($._space_tabs),
+          '=',
+          choice(seq($.text, repeat($._nl_or_indented)), repeat1($._nl_or_indented)),
+        ),
+      ),
+
+    message_comment: ($) => seq('#', /[^#\n]+/),
+    message_with_comment: ($) => seq(repeat1(seq($.message_comment, '\n')), $.message),
+
+    _blank_line: ($) => '\n',
+
+    _nl_or_indented: ($) =>
+      choice(prec.left(repeat1($._blank_line)), seq($._blank_line, repeat1($._space_tabs), $.text)),
 
     _identifier: ($) => /[a-z_][a-z0-9_-]*/,
     identifier: ($) => $._identifier,
     term: ($) => seq('-', $._identifier),
-    _line_break: ($) => /[\u000A\u000D]+/,
-    _inline_space: ($) => /[\u0020\u0009]+/,
-    _blank_line: ($) => seq(optional($._inline_space), $._line_break),
-    _hexdigit: ($) => /[0-9a-fA-F]/,
 
-    quoted_text: ($) =>
-      seq(
-        '"',
-        optional($._inline_space),
-        repeat(
-          choice(
-            '\\"',
-            seq('\\u', $._hexdigit, $._hexdigit, $._hexdigit, $._hexdigit),
-            seq(
-              '\\U',
-              $._hexdigit,
-              $._hexdigit,
-              $._hexdigit,
-              $._hexdigit,
-              $._hexdigit,
-              $._hexdigit,
-            ),
-            '\\\\',
-            /[^\\"]*/,
-          ),
-        ),
-        optional($._inline_space),
-        '"',
-      ),
+    text: ($) => repeat1(choice(ranges_without(NT_Char, '\n{', '+'), $.placeable)),
 
     placeable: ($) =>
-      seq('{', optional($._inline_space), choice($.quoted_text), optional($._inline_space), '}'),
+      seq('{', repeat($._space_tabs), choice($.quoted_text), repeat($._space_tabs), '}'),
 
-    text: ($) => repeat1(choice(ranges_without(NT_Char, '\r\n\\{', '+'), $.placeable)),
+    quoted_escaped: ($) =>
+      choice(
+        seq('\\u', $._hexdigit, $._hexdigit, $._hexdigit, $._hexdigit),
+        seq('\\U', $._hexdigit, $._hexdigit, $._hexdigit, $._hexdigit, $._hexdigit, $._hexdigit),
+        '\\"',
+        '\\\\',
+      ),
 
-    message: ($) =>
-      seq($.identifier, optional($._inline_space), '=', optional($._inline_space), $.text),
+    quoted_text: ($) =>
+      seq('"', repeat(choice($.quoted_escaped, ranges_without(NT_Char, '\\"', '+'))), '"'),
+
+    _hexdigit: ($) => /[0-9a-fA-F]/,
+    _space_tabs: ($) => /[ \t]/,
   },
 })

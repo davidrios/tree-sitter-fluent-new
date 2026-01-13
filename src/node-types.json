@@ -1,50 +1,6 @@
 [
   {
-    "type": "identifier",
-    "named": true,
-    "fields": {}
-  },
-  {
-    "type": "message",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "identifier",
-          "named": true
-        },
-        {
-          "type": "text",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "placeable",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "quoted_text",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "quoted_text",
-    "named": true,
-    "fields": {}
-  },
-  {
-    "type": "source_file",
+    "type": "debug",
     "named": true,
     "root": true,
     "fields": {},
@@ -53,57 +9,27 @@
       "required": false,
       "types": [
         {
-          "type": "message",
+          "type": "repeated_lines",
           "named": true
         }
       ]
     }
   },
   {
-    "type": "text",
+    "type": "repeated_lines",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "placeable",
-          "named": true
-        }
-      ]
-    }
+    "fields": {}
   },
   {
-    "type": "\"",
+    "type": "\n",
     "named": false
   },
   {
-    "type": "=",
+    "type": "a",
     "named": false
   },
   {
-    "type": "\\\"",
-    "named": false
-  },
-  {
-    "type": "\\U",
-    "named": false
-  },
-  {
-    "type": "\\\\",
-    "named": false
-  },
-  {
-    "type": "\\u",
-    "named": false
-  },
-  {
-    "type": "{",
-    "named": false
-  },
-  {
-    "type": "}",
+    "type": "aaa",
     "named": false
   }
 ]
