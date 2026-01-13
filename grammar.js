@@ -10,6 +10,8 @@
 const { ranges_without } = require('./dsl')
 
 const NT_Char = '\x09\x0A\x0D\x20-\uD7FF\uE000-\uFFFD'
+const WHITESPACES = '[ \t]'
+const WHITESPACES_RE = new RegExp(`${WHITESPACES}+`)
 
 module.exports = grammar({
   name: 'fluent',
@@ -17,51 +19,51 @@ module.exports = grammar({
   extras: ($) => [],
 
   rules: {
-    debug: ($) => repeat(choice($.blank_lines, 'a', 'aaa')),
-    blank_lines: ($) => prec.right(repeat1($._blank_line)),
-    source_file: ($) => seq(repeat(/\s/), repeat($._definition)),
-
-    _comment_content: ($) => /[^\n]+/,
-    comment: ($) => seq('#', optional($._comment_content)),
-    group_comment: ($) => seq('##', optional($._comment_content)),
-    file_comment: ($) => seq('###', optional($._comment_content)),
-
-    _definition: ($) =>
-      choice(
-        prec.left(1, $.comment),
-        // prec.left(1, choice($.group_comment, '\n')),
-        // prec.left(1, choice($.file_comment, '\n')),
-        prec.left(2, $.message),
-        prec.left(3, $.message_with_comment),
-      ),
-
-    message: ($) =>
-      prec.left(
-        seq(
-          choice($.identifier, $.term),
-          repeat($._space_tabs),
-          '=',
-          choice(seq($.text, repeat($._nl_or_indented)), repeat1($._nl_or_indented)),
+    // debug: ($) => repeat(choice($.blank_lines)),
+    source: ($) =>
+      repeat(
+        choice(
+          $.blank_lines,
+          $.comment,
+          $.group_comment,
+          $.file_comment,
+          $.message,
+          $.message_with_comment,
         ),
       ),
 
-    message_comment: ($) => seq('#', /[^#\n]+/),
-    message_with_comment: ($) => seq(repeat1(seq($.message_comment, '\n')), $.message),
+    whitespaces: ($) => WHITESPACES_RE,
+    blank_lines: ($) => prec.right(repeat1(choice($.new_lines, $.whitespaces))),
+    new_line: ($) => prec.left(1, '\n'),
+    new_lines: ($) => /\n+/,
 
-    _blank_line: ($) => '\n',
+    comment_content: ($) => /.+/,
+    comment: ($) => seq('#', $.comment_content),
+    group_comment: ($) => seq('##', $.comment_content),
+    file_comment: ($) => seq('###', $.comment_content),
 
-    _nl_or_indented: ($) =>
-      choice(prec.left(repeat1($._blank_line)), seq($._blank_line, repeat1($._space_tabs), $.text)),
+    message_with_comment: ($) => seq(repeat1(seq('#', $.comment_content, '\n')), $.message),
+
+    message: ($) =>
+      seq(
+        choice($.identifier, $.term),
+        optional($.whitespaces),
+        '=',
+        repeat($.text),
+        repeat($.message_continuation),
+      ),
 
     _identifier: ($) => /[a-z_][a-z0-9_-]*/,
     identifier: ($) => $._identifier,
     term: ($) => seq('-', $._identifier),
 
-    text: ($) => repeat1(choice(ranges_without(NT_Char, '\n{', '+'), $.placeable)),
+    text: ($) => repeat1(choice(/[^\n{]+/, $.placeable)),
+    message_continuation: ($) => seq(new RegExp(`\n${WHITESPACES}+`), $.text),
 
     placeable: ($) =>
-      seq('{', repeat($._space_tabs), choice($.quoted_text), repeat($._space_tabs), '}'),
+      seq('{', optional($.whitespaces), $.quoted_text, optional($.whitespaces), '}'),
 
+    quoted_text: ($) => seq('"', repeat(choice($.quoted_escaped, /[^"]+/)), '"'),
     quoted_escaped: ($) =>
       choice(
         seq('\\u', $._hexdigit, $._hexdigit, $._hexdigit, $._hexdigit),
@@ -70,10 +72,6 @@ module.exports = grammar({
         '\\\\',
       ),
 
-    quoted_text: ($) =>
-      seq('"', repeat(choice($.quoted_escaped, ranges_without(NT_Char, '\\"', '+'))), '"'),
-
     _hexdigit: ($) => /[0-9a-fA-F]/,
-    _space_tabs: ($) => /[ \t]/,
   },
 })
