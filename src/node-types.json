@@ -77,23 +77,23 @@
       "required": true,
       "types": [
         {
+          "type": "assignment",
+          "named": true
+        },
+        {
           "type": "identifier",
           "named": true
         },
         {
-          "type": "message_continuation",
+          "type": "message_value",
+          "named": true
+        },
+        {
+          "type": "prec_whitespaces",
           "named": true
         },
         {
           "type": "term",
-          "named": true
-        },
-        {
-          "type": "text",
-          "named": true
-        },
-        {
-          "type": "whitespaces",
           "named": true
         }
       ]
@@ -108,7 +108,26 @@
       "required": true,
       "types": [
         {
-          "type": "text",
+          "type": "pattern",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "message_value",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "message_continuation",
+          "named": true
+        },
+        {
+          "type": "pattern",
           "named": true
         }
       ]
@@ -123,11 +142,30 @@
       "required": true,
       "types": [
         {
-          "type": "comment_content",
+          "type": "comment",
           "named": true
         },
         {
           "type": "message",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "pattern",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "placeable",
+          "named": true
+        },
+        {
+          "type": "text",
           "named": true
         }
       ]
@@ -214,21 +252,6 @@
     "fields": {}
   },
   {
-    "type": "text",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "placeable",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "\n",
     "named": false
   },
@@ -253,10 +276,6 @@
     "named": false
   },
   {
-    "type": "=",
-    "named": false
-  },
-  {
     "type": "\\\"",
     "named": false
   },
@@ -273,11 +292,23 @@
     "named": false
   },
   {
+    "type": "assignment",
+    "named": true
+  },
+  {
     "type": "comment_content",
     "named": true
   },
   {
     "type": "new_lines",
+    "named": true
+  },
+  {
+    "type": "prec_whitespaces",
+    "named": true
+  },
+  {
+    "type": "text",
     "named": true
   },
   {

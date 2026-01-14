@@ -7,9 +7,6 @@
 /// <reference types="tree-sitter-cli/dsl" />
 // @ts-check
 
-const { ranges_without } = require('./dsl')
-
-const NT_Char = '\x09\x0A\x0D\x20-\uD7FF\uE000-\uFFFD'
 const WHITESPACES = '[ \t]'
 const WHITESPACES_RE = new RegExp(`${WHITESPACES}+`)
 
@@ -42,32 +39,59 @@ module.exports = grammar({
     group_comment: ($) => seq('##', $.comment_content),
     file_comment: ($) => seq('###', $.comment_content),
 
-    message_with_comment: ($) => seq(repeat1(seq('#', $.comment_content, '\n')), $.message),
+    message_with_comment: ($) => seq(repeat1(seq($.comment, '\n')), $.message),
+
+    prec_whitespaces: ($) => token(prec(10, WHITESPACES_RE)),
 
     message: ($) =>
       seq(
         choice($.identifier, $.term),
-        optional($.whitespaces),
-        '=',
-        repeat($.text),
-        repeat($.message_continuation),
+        optional($.prec_whitespaces),
+        $.assignment,
+        optional($.prec_whitespaces),
+        $.message_value,
       ),
 
     _identifier: ($) => /[a-z_][a-z0-9_-]*/,
     identifier: ($) => $._identifier,
     term: ($) => seq('-', $._identifier),
 
-    text: ($) => repeat1(choice(/[^\n{]+/, $.placeable)),
-    message_continuation: ($) => seq(new RegExp(`\n${WHITESPACES}+`), $.text),
+    assignment: ($) => '=',
+
+    message_value: ($) =>
+      seq(
+        choice($.pattern, $.message_continuation),
+        repeat($.message_continuation),
+      ),
+    text: ($) => token(prec(1, /[^\n{}]+/)),
+    pattern: ($) => repeat1(choice($.text, $.placeable)),
+    message_continuation: ($) =>
+      seq(new RegExp(`\n${WHITESPACES}+`), $.pattern),
 
     placeable: ($) =>
-      seq('{', optional($.whitespaces), $.quoted_text, optional($.whitespaces), '}'),
+      seq(
+        '{',
+        optional($.whitespaces),
+        $.quoted_text,
+        optional($.whitespaces),
+        '}',
+      ),
 
-    quoted_text: ($) => seq('"', repeat(choice($.quoted_escaped, /[^"]+/)), '"'),
+    quoted_text: ($) =>
+      seq('"', repeat(choice($.quoted_escaped, /[^\\"]+/)), '"'),
+
     quoted_escaped: ($) =>
       choice(
         seq('\\u', $._hexdigit, $._hexdigit, $._hexdigit, $._hexdigit),
-        seq('\\U', $._hexdigit, $._hexdigit, $._hexdigit, $._hexdigit, $._hexdigit, $._hexdigit),
+        seq(
+          '\\U',
+          $._hexdigit,
+          $._hexdigit,
+          $._hexdigit,
+          $._hexdigit,
+          $._hexdigit,
+          $._hexdigit,
+        ),
         '\\"',
         '\\\\',
       ),
