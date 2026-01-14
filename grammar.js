@@ -21,35 +21,39 @@ module.exports = grammar({
       repeat(
         choice(
           $.blank_lines,
-          $.comment,
-          $.group_comment,
-          $.file_comment,
+          // $.comment,
+          // $.group_comment,
+          // $.file_comment,
           $.message,
-          $.message_with_comment,
+          seq(token(prec(0, '\n')), $.message),
+          // $.message_with_comment,
         ),
       ),
 
     whitespaces: ($) => WHITESPACES_RE,
-    blank_lines: ($) => prec.right(repeat1(choice($.new_lines, $.whitespaces))),
-    new_line: ($) => prec.left(1, '\n'),
+    // indentation: ($) => token(prec(1, / +/)),
+    just_spaces: ($) => /[ ]+/,
+    blank_lines_: ($) => prec.right(repeat1(choice($.new_line, $.just_spaces))),
+    blank_lines: ($) => prec.left(repeat1(/[ ]*\n/)),
+    new_line: ($) => '\n',
     new_lines: ($) => /\n+/,
 
-    comment_content: ($) => /.+/,
+    comment_content: ($) => / .+/,
     comment: ($) => seq('#', $.comment_content),
     group_comment: ($) => seq('##', $.comment_content),
     file_comment: ($) => seq('###', $.comment_content),
 
     message_with_comment: ($) => seq(repeat1(seq($.comment, '\n')), $.message),
 
-    prec_whitespaces: ($) => token(prec(10, WHITESPACES_RE)),
+    prec_whitespaces: ($) => token(prec(100, /[ \t]+/)),
 
     message: ($) =>
       seq(
-        choice($.identifier, $.term),
+        field('id', $.identifier),
         optional($.prec_whitespaces),
         $.assignment,
         optional($.prec_whitespaces),
-        $.message_value,
+        field('value', $.pattern),
       ),
 
     _identifier: ($) => /[a-z_][a-z0-9_-]*/,
@@ -58,15 +62,23 @@ module.exports = grammar({
 
     assignment: ($) => '=',
 
-    message_value: ($) =>
-      seq(
-        choice($.pattern, $.message_continuation),
-        repeat($.message_continuation),
-      ),
-    text: ($) => token(prec(1, /[^\n{}]+/)),
-    pattern: ($) => repeat1(choice($.text, $.placeable)),
-    message_continuation: ($) =>
-      seq(new RegExp(`\n${WHITESPACES}+`), $.pattern),
+    // pattern_: ($) =>
+    //   prec.right(
+    //     0,
+    //     seq(
+    //       choice($.text, $.pattern_continuation),
+    //       repeat($.pattern_continuation),
+    //     ),
+    //   ),
+
+    pattern: ($) => repeat1(choice($.pure_text, $.placeable)),
+    pure_text: ($) => token(prec(90, /[^{}]+/)),
+
+    // pattern_continuation: ($) =>
+    //   seq(repeat(choice('\n', ' ')), $.indented_text),
+    //
+    // blank_line: ($) => /[ ]*\n/,
+    // indented_text: ($) => seq(/\n[ ]+/, $.text),
 
     placeable: ($) =>
       seq(

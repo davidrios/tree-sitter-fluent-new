@@ -13,23 +13,27 @@
           },
           {
             "type": "SYMBOL",
-            "name": "comment"
-          },
-          {
-            "type": "SYMBOL",
-            "name": "group_comment"
-          },
-          {
-            "type": "SYMBOL",
-            "name": "file_comment"
-          },
-          {
-            "type": "SYMBOL",
             "name": "message"
           },
           {
-            "type": "SYMBOL",
-            "name": "message_with_comment"
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "TOKEN",
+                "content": {
+                  "type": "PREC",
+                  "value": 0,
+                  "content": {
+                    "type": "STRING",
+                    "value": "\n"
+                  }
+                }
+              },
+              {
+                "type": "SYMBOL",
+                "name": "message"
+              }
+            ]
           }
         ]
       }
@@ -38,7 +42,11 @@
       "type": "PATTERN",
       "value": "[ \t]+"
     },
-    "blank_lines": {
+    "just_spaces": {
+      "type": "PATTERN",
+      "value": "[ ]+"
+    },
+    "blank_lines_": {
       "type": "PREC_RIGHT",
       "value": 0,
       "content": {
@@ -48,23 +56,30 @@
           "members": [
             {
               "type": "SYMBOL",
-              "name": "new_lines"
+              "name": "new_line"
             },
             {
               "type": "SYMBOL",
-              "name": "whitespaces"
+              "name": "just_spaces"
             }
           ]
         }
       }
     },
-    "new_line": {
+    "blank_lines": {
       "type": "PREC_LEFT",
-      "value": 1,
+      "value": 0,
       "content": {
-        "type": "STRING",
-        "value": "\n"
+        "type": "REPEAT1",
+        "content": {
+          "type": "PATTERN",
+          "value": "[ ]*\\n"
+        }
       }
+    },
+    "new_line": {
+      "type": "STRING",
+      "value": "\n"
     },
     "new_lines": {
       "type": "PATTERN",
@@ -72,7 +87,7 @@
     },
     "comment_content": {
       "type": "PATTERN",
-      "value": ".+"
+      "value": " .+"
     },
     "comment": {
       "type": "SEQ",
@@ -142,10 +157,10 @@
       "type": "TOKEN",
       "content": {
         "type": "PREC",
-        "value": 10,
+        "value": 100,
         "content": {
           "type": "PATTERN",
-          "value": "[ \t]+"
+          "value": "[ \\t]+"
         }
       }
     },
@@ -153,17 +168,12 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "identifier"
-            },
-            {
-              "type": "SYMBOL",
-              "name": "term"
-            }
-          ]
+          "type": "FIELD",
+          "name": "id",
+          "content": {
+            "type": "SYMBOL",
+            "name": "identifier"
+          }
         },
         {
           "type": "CHOICE",
@@ -194,8 +204,12 @@
           ]
         },
         {
-          "type": "SYMBOL",
-          "name": "message_value"
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "SYMBOL",
+            "name": "pattern"
+          }
         }
       ]
     },
@@ -224,42 +238,6 @@
       "type": "STRING",
       "value": "="
     },
-    "message_value": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "pattern"
-            },
-            {
-              "type": "SYMBOL",
-              "name": "message_continuation"
-            }
-          ]
-        },
-        {
-          "type": "REPEAT",
-          "content": {
-            "type": "SYMBOL",
-            "name": "message_continuation"
-          }
-        }
-      ]
-    },
-    "text": {
-      "type": "TOKEN",
-      "content": {
-        "type": "PREC",
-        "value": 1,
-        "content": {
-          "type": "PATTERN",
-          "value": "[^\\n{}]+"
-        }
-      }
-    },
     "pattern": {
       "type": "REPEAT1",
       "content": {
@@ -267,7 +245,7 @@
         "members": [
           {
             "type": "SYMBOL",
-            "name": "text"
+            "name": "pure_text"
           },
           {
             "type": "SYMBOL",
@@ -276,18 +254,16 @@
         ]
       }
     },
-    "message_continuation": {
-      "type": "SEQ",
-      "members": [
-        {
+    "pure_text": {
+      "type": "TOKEN",
+      "content": {
+        "type": "PREC",
+        "value": 90,
+        "content": {
           "type": "PATTERN",
-          "value": "\\n[ \t]+"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "pattern"
+          "value": "[^{}]+"
         }
-      ]
+      }
     },
     "placeable": {
       "type": "SEQ",
