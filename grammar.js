@@ -14,77 +14,94 @@ module.exports = grammar({
   name: 'fluent',
 
   extras: ($) => [],
+  externals: ($) => [
+    $.pattern_start,
+    $.pattern_pure_text,
+    $.pattern_end,
+    $.pattern_skip,
+    $.blank_lines,
+  ],
 
   rules: {
     // debug: ($) => repeat(choice($.blank_lines)),
     source: ($) =>
       repeat(
         choice(
-          $.blank_lines,
-          // $.comment,
-          // $.group_comment,
-          // $.file_comment,
+          $.comment,
+          $.group_comment,
+          $.file_comment,
           $.message,
-          seq(token(prec(0, '\n')), $.message),
-          // $.message_with_comment,
+          $.message_with_comment,
+          $.term,
+          $.term_with_comment,
+          $.blank_lines,
         ),
       ),
 
     whitespaces: ($) => WHITESPACES_RE,
-    // indentation: ($) => token(prec(1, / +/)),
-    just_spaces: ($) => /[ ]+/,
-    blank_lines_: ($) => prec.right(repeat1(choice($.new_line, $.just_spaces))),
-    blank_lines: ($) => prec.left(repeat1(/[ ]*\n/)),
-    new_line: ($) => '\n',
-    new_lines: ($) => /\n+/,
+    prec_whitespaces: ($) => token(prec(100, WHITESPACES_RE)),
 
-    comment_content: ($) => / .+/,
-    comment: ($) => seq('#', $.comment_content),
-    group_comment: ($) => seq('##', $.comment_content),
-    file_comment: ($) => seq('###', $.comment_content),
-
-    message_with_comment: ($) => seq(repeat1(seq($.comment, '\n')), $.message),
-
-    prec_whitespaces: ($) => token(prec(100, /[ \t]+/)),
+    comment_content: ($) => seq(/[^\n]+/, '\n'),
+    comment: ($) => seq('#', $.prec_whitespaces, $.comment_content),
+    group_comment: ($) => seq('##', $.prec_whitespaces, $.comment_content),
+    file_comment: ($) => seq('###', $.prec_whitespaces, $.comment_content),
 
     message: ($) =>
       seq(
         field('id', $.identifier),
         optional($.prec_whitespaces),
         $.assignment,
+        seq(
+          choice(field('value', $.pattern), prec(1, $.pattern_skip)),
+          field('attributes', repeat($.attribute)),
+        ),
+      ),
+    message_with_comment: ($) =>
+      seq(repeat1(prec(1, seq($.comment))), $.message),
+
+    attribute: ($) =>
+      seq(
+        seq('.', $.identifier),
+        optional($.prec_whitespaces),
+        $.assignment,
+        choice(field('value', $.pattern), prec(1, $.pattern_skip)),
+      ),
+
+    identifier: ($) => /[a-z_][a-z0-9_-]*/,
+
+    term: ($) =>
+      seq(
+        field('id', $.term_identifier),
+        optional($.prec_whitespaces),
+        $.assignment,
         optional($.prec_whitespaces),
         field('value', $.pattern),
       ),
+    term_with_comment: ($) => seq(repeat1(prec(1, seq($.comment))), $.term),
 
-    _identifier: ($) => /[a-z_][a-z0-9_-]*/,
-    identifier: ($) => $._identifier,
-    term: ($) => seq('-', $._identifier),
+    term_identifier: ($) => seq('-', alias($.identifier, 'identifier')),
 
     assignment: ($) => '=',
 
-    // pattern_: ($) =>
-    //   prec.right(
-    //     0,
-    //     seq(
-    //       choice($.text, $.pattern_continuation),
-    //       repeat($.pattern_continuation),
-    //     ),
-    //   ),
+    variable: ($) => seq('$', alias($.identifier, 'identifier')),
 
-    pattern: ($) => repeat1(choice($.pure_text, $.placeable)),
-    pure_text: ($) => token(prec(90, /[^{}]+/)),
-
-    // pattern_continuation: ($) =>
-    //   seq(repeat(choice('\n', ' ')), $.indented_text),
-    //
-    // blank_line: ($) => /[ ]*\n/,
-    // indented_text: ($) => seq(/\n[ ]+/, $.text),
+    pattern: ($) =>
+      seq(
+        $.pattern_start,
+        repeat1(choice($.pattern_pure_text, $.placeable)),
+        $.pattern_end,
+      ),
 
     placeable: ($) =>
       seq(
         '{',
         optional($.whitespaces),
-        $.quoted_text,
+        choice(
+          $.quoted_text,
+          alias($.identifier, $.message_id),
+          alias($.term_identifier, $.term_id),
+          $.variable,
+        ),
         optional($.whitespaces),
         '}',
       ),
