@@ -92,17 +92,20 @@ module.exports = grammar({
         $.pattern_end,
       ),
 
+    expression: ($) =>
+      choice(
+        $.number,
+        $.quoted_text,
+        alias($.identifier, $.message_id),
+        alias($.term_identifier, $.term_id),
+        $.variable,
+      ),
+
     placeable: ($) =>
       seq(
         '{',
         optional($.whitespaces),
-        choice(
-          $.number,
-          $.quoted_text,
-          alias($.identifier, $.message_id),
-          alias($.term_identifier, $.term_id),
-          $.variable,
-        ),
+        $.expression,
         optional($.whitespaces),
         '}',
       ),
