@@ -45,31 +45,29 @@ bool tree_sitter_fluent_external_scanner_scan(void *payload, TSLexer *lexer,
                                               const bool *valid_symbols) {
   Scanner *s = (Scanner *)payload;
 
-  // if (valid_symbols[PATTERN_SKIP]) {
-  //   while (lexer->lookahead == ' ' || lexer->lookahead == '\n') {
-  //     lexer->advance(lexer, false);
-  //   }
-  //   if (lexer->lookahead == '.') {
-  //     lexer->result_symbol = PATTERN_SKIP;
-  //     return true;
-  //   }
-  // }
-
   if (valid_symbols[PATTERN_SKIP]) {
     while (lexer->lookahead == ' ') {
       lexer->advance(lexer, false);
     }
 
     if (lexer->lookahead == '\n') {
-      lexer->advance(lexer, false);
-      while (lexer->lookahead == ' ' || lexer->lookahead == '\n') {
+      while (lexer->lookahead == '\n') {
         lexer->advance(lexer, false);
-      }
-    }
 
-    if (lexer->lookahead == '.') {
-      lexer->result_symbol = PATTERN_SKIP;
-      return true;
+        if (lexer->lookahead != ' ') {
+          lexer->result_symbol = PATTERN_SKIP;
+          return true;
+        }
+
+        while (lexer->lookahead == ' ') {
+          lexer->advance(lexer, false);
+        }
+
+        if (lexer->lookahead == '.') {
+          lexer->result_symbol = PATTERN_SKIP;
+          return true;
+        }
+      }
     }
   }
 
@@ -92,6 +90,14 @@ bool tree_sitter_fluent_external_scanner_scan(void *payload, TSLexer *lexer,
       }
 
       if (lexer->lookahead != ' ') {
+        should_end = true;
+      }
+
+      while (lexer->lookahead == ' ') {
+        lexer->advance(lexer, false);
+      }
+
+      if (lexer->lookahead == '.') {
         should_end = true;
       }
     } else if (lexer->lookahead == 0) {
@@ -123,6 +129,15 @@ bool tree_sitter_fluent_external_scanner_scan(void *payload, TSLexer *lexer,
 
         if (lexer->lookahead != ' ') {
           break;
+        } else {
+          lexer->advance(lexer, false);
+          while (lexer->lookahead == ' ') {
+            lexer->advance(lexer, false);
+          }
+
+          if (lexer->lookahead == '.') {
+            break;
+          }
         }
       }
 

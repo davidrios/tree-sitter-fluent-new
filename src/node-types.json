@@ -3,6 +3,16 @@
     "type": "attribute",
     "named": true,
     "fields": {
+      "id": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
       "value": {
         "multiple": false,
         "required": false,
@@ -20,10 +30,6 @@
       "types": [
         {
           "type": "assignment",
-          "named": true
-        },
-        {
-          "type": "identifier",
           "named": true
         },
         {
@@ -103,7 +109,7 @@
     "type": "message",
     "named": true,
     "fields": {
-      "attributes": {
+      "attribute": {
         "multiple": true,
         "required": false,
         "types": [
@@ -154,7 +160,7 @@
     }
   },
   {
-    "type": "message_with_comment",
+    "type": "message_with_doc_comment",
     "named": true,
     "fields": {},
     "children": {
@@ -209,6 +215,10 @@
       "types": [
         {
           "type": "message_id",
+          "named": true
+        },
+        {
+          "type": "number",
           "named": true
         },
         {
@@ -280,7 +290,7 @@
           "named": true
         },
         {
-          "type": "message_with_comment",
+          "type": "message_with_doc_comment",
           "named": true
         },
         {
@@ -288,7 +298,7 @@
           "named": true
         },
         {
-          "type": "term_with_comment",
+          "type": "term_with_doc_comment",
           "named": true
         }
       ]
@@ -345,7 +355,7 @@
     "fields": {}
   },
   {
-    "type": "term_with_comment",
+    "type": "term_with_doc_comment",
     "named": true,
     "fields": {},
     "children": {
@@ -434,6 +444,10 @@
   },
   {
     "type": "message_id",
+    "named": true
+  },
+  {
+    "type": "number",
     "named": true
   },
   {

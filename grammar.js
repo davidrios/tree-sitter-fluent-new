@@ -13,7 +13,7 @@ const WHITESPACES_RE = new RegExp(`${WHITESPACES}+`)
 module.exports = grammar({
   name: 'fluent',
 
-  extras: ($) => [],
+  extras: () => [],
   externals: ($) => [
     $.pattern_start,
     $.pattern_pure_text,
@@ -31,17 +31,17 @@ module.exports = grammar({
           $.group_comment,
           $.file_comment,
           $.message,
-          $.message_with_comment,
+          $.message_with_doc_comment,
           $.term,
-          $.term_with_comment,
+          $.term_with_doc_comment,
           $.blank_lines,
         ),
       ),
 
-    whitespaces: ($) => WHITESPACES_RE,
-    prec_whitespaces: ($) => token(prec(100, WHITESPACES_RE)),
+    whitespaces: () => WHITESPACES_RE,
+    prec_whitespaces: () => token(prec(100, WHITESPACES_RE)),
 
-    comment_content: ($) => seq(/[^\n]+/, '\n'),
+    comment_content: () => seq(/[^\n]+/, '\n'),
     comment: ($) => seq('#', $.prec_whitespaces, $.comment_content),
     group_comment: ($) => seq('##', $.prec_whitespaces, $.comment_content),
     file_comment: ($) => seq('###', $.prec_whitespaces, $.comment_content),
@@ -53,21 +53,21 @@ module.exports = grammar({
         $.assignment,
         seq(
           choice(field('value', $.pattern), prec(1, $.pattern_skip)),
-          field('attributes', repeat($.attribute)),
+          field('attribute', repeat($.attribute)),
         ),
       ),
-    message_with_comment: ($) =>
+    message_with_doc_comment: ($) =>
       seq(repeat1(prec(1, seq($.comment))), $.message),
 
     attribute: ($) =>
       seq(
-        seq('.', $.identifier),
+        seq('.', field('id', $.identifier)),
         optional($.prec_whitespaces),
         $.assignment,
         choice(field('value', $.pattern), prec(1, $.pattern_skip)),
       ),
 
-    identifier: ($) => /[a-z_][a-z0-9_-]*/,
+    identifier: () => /[a-z_][a-z0-9_-]*/,
 
     term: ($) =>
       seq(
@@ -77,11 +77,11 @@ module.exports = grammar({
         optional($.prec_whitespaces),
         field('value', $.pattern),
       ),
-    term_with_comment: ($) => seq(repeat1(prec(1, seq($.comment))), $.term),
+    term_with_doc_comment: ($) => seq(repeat1(prec(1, seq($.comment))), $.term),
 
     term_identifier: ($) => seq('-', alias($.identifier, 'identifier')),
 
-    assignment: ($) => '=',
+    assignment: () => '=',
 
     variable: ($) => seq('$', alias($.identifier, 'identifier')),
 
@@ -97,6 +97,7 @@ module.exports = grammar({
         '{',
         optional($.whitespaces),
         choice(
+          $.number,
           $.quoted_text,
           alias($.identifier, $.message_id),
           alias($.term_identifier, $.term_id),
@@ -105,6 +106,8 @@ module.exports = grammar({
         optional($.whitespaces),
         '}',
       ),
+
+    number: () => /\d\d*(\.\d*)?/,
 
     quoted_text: ($) =>
       seq('"', repeat(choice($.quoted_escaped, /[^\\"]+/)), '"'),
@@ -125,6 +128,6 @@ module.exports = grammar({
         '\\\\',
       ),
 
-    _hexdigit: ($) => /[0-9a-fA-F]/,
+    _hexdigit: () => /[0-9a-fA-F]/,
   },
 })

@@ -25,7 +25,7 @@
           },
           {
             "type": "SYMBOL",
-            "name": "message_with_comment"
+            "name": "message_with_doc_comment"
           },
           {
             "type": "SYMBOL",
@@ -33,7 +33,7 @@
           },
           {
             "type": "SYMBOL",
-            "name": "term_with_comment"
+            "name": "term_with_doc_comment"
           },
           {
             "type": "SYMBOL",
@@ -174,7 +174,7 @@
             },
             {
               "type": "FIELD",
-              "name": "attributes",
+              "name": "attribute",
               "content": {
                 "type": "REPEAT",
                 "content": {
@@ -187,7 +187,7 @@
         }
       ]
     },
-    "message_with_comment": {
+    "message_with_doc_comment": {
       "type": "SEQ",
       "members": [
         {
@@ -223,8 +223,12 @@
               "value": "."
             },
             {
-              "type": "SYMBOL",
-              "name": "identifier"
+              "type": "FIELD",
+              "name": "id",
+              "content": {
+                "type": "SYMBOL",
+                "name": "identifier"
+              }
             }
           ]
         },
@@ -320,7 +324,7 @@
         }
       ]
     },
-    "term_with_comment": {
+    "term_with_doc_comment": {
       "type": "SEQ",
       "members": [
         {
@@ -438,6 +442,10 @@
           "members": [
             {
               "type": "SYMBOL",
+              "name": "number"
+            },
+            {
+              "type": "SYMBOL",
               "name": "quoted_text"
             },
             {
@@ -481,6 +489,10 @@
           "value": "}"
         }
       ]
+    },
+    "number": {
+      "type": "PATTERN",
+      "value": "\\d\\d*(\\.\\d*)?"
     },
     "quoted_text": {
       "type": "SEQ",
