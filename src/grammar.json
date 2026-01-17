@@ -44,18 +44,7 @@
     },
     "whitespaces": {
       "type": "PATTERN",
-      "value": "[ \t]+"
-    },
-    "prec_whitespaces": {
-      "type": "TOKEN",
-      "content": {
-        "type": "PREC",
-        "value": 100,
-        "content": {
-          "type": "PATTERN",
-          "value": "[ \t]+"
-        }
-      }
+      "value": " +"
     },
     "comment_content": {
       "type": "SEQ",
@@ -75,11 +64,7 @@
       "members": [
         {
           "type": "STRING",
-          "value": "#"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "prec_whitespaces"
+          "value": "# "
         },
         {
           "type": "SYMBOL",
@@ -92,11 +77,7 @@
       "members": [
         {
           "type": "STRING",
-          "value": "##"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "prec_whitespaces"
+          "value": "## "
         },
         {
           "type": "SYMBOL",
@@ -109,11 +90,7 @@
       "members": [
         {
           "type": "STRING",
-          "value": "###"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "prec_whitespaces"
+          "value": "### "
         },
         {
           "type": "SYMBOL",
@@ -137,7 +114,7 @@
           "members": [
             {
               "type": "SYMBOL",
-              "name": "prec_whitespaces"
+              "name": "whitespaces"
             },
             {
               "type": "BLANK"
@@ -237,7 +214,7 @@
           "members": [
             {
               "type": "SYMBOL",
-              "name": "prec_whitespaces"
+              "name": "whitespaces"
             },
             {
               "type": "BLANK"
@@ -273,7 +250,7 @@
     },
     "identifier": {
       "type": "PATTERN",
-      "value": "[a-z_][a-z0-9_-]*"
+      "value": "[a-zA-Z][a-zA-Z0-9_-]*"
     },
     "term": {
       "type": "SEQ",
@@ -291,7 +268,7 @@
           "members": [
             {
               "type": "SYMBOL",
-              "name": "prec_whitespaces"
+              "name": "whitespaces"
             },
             {
               "type": "BLANK"
@@ -301,18 +278,6 @@
         {
           "type": "SYMBOL",
           "name": "assignment"
-        },
-        {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "prec_whitespaces"
-            },
-            {
-              "type": "BLANK"
-            }
-          ]
         },
         {
           "type": "FIELD",
@@ -418,19 +383,116 @@
         }
       ]
     },
+    "expression": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "number"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "quoted_text"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "identifier"
+          },
+          "named": true,
+          "value": "message_id"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "term_identifier"
+          },
+          "named": true,
+          "value": "term_id"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "variable"
+        }
+      ]
+    },
+    "selector_key": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "identifier"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "number"
+        }
+      ]
+    },
+    "selector_variant": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "PATTERN",
+          "value": "\\*?\\[[ \\n]*"
+        },
+        {
+          "type": "FIELD",
+          "name": "key",
+          "content": {
+            "type": "SYMBOL",
+            "name": "selector_key"
+          }
+        },
+        {
+          "type": "PATTERN",
+          "value": "[\\n ]*\\]"
+        },
+        {
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "SYMBOL",
+            "name": "pattern"
+          }
+        }
+      ]
+    },
     "placeable": {
       "type": "SEQ",
       "members": [
         {
-          "type": "STRING",
-          "value": "{"
+          "type": "PATTERN",
+          "value": "\\{[ \\n]*"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "expression"
         },
         {
           "type": "CHOICE",
           "members": [
             {
-              "type": "SYMBOL",
-              "name": "whitespaces"
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "PATTERN",
+                  "value": "-> *\\n[ \\n]*"
+                },
+                {
+                  "type": "FIELD",
+                  "name": "selectors",
+                  "content": {
+                    "type": "REPEAT1",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "selector_variant"
+                    }
+                  }
+                }
+              ]
             },
             {
               "type": "BLANK"
@@ -438,61 +500,14 @@
           ]
         },
         {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "number"
-            },
-            {
-              "type": "SYMBOL",
-              "name": "quoted_text"
-            },
-            {
-              "type": "ALIAS",
-              "content": {
-                "type": "SYMBOL",
-                "name": "identifier"
-              },
-              "named": true,
-              "value": "message_id"
-            },
-            {
-              "type": "ALIAS",
-              "content": {
-                "type": "SYMBOL",
-                "name": "term_identifier"
-              },
-              "named": true,
-              "value": "term_id"
-            },
-            {
-              "type": "SYMBOL",
-              "name": "variable"
-            }
-          ]
-        },
-        {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "whitespaces"
-            },
-            {
-              "type": "BLANK"
-            }
-          ]
-        },
-        {
-          "type": "STRING",
-          "value": "}"
+          "type": "PATTERN",
+          "value": "[ \\n]*\\}"
         }
       ]
     },
     "number": {
       "type": "PATTERN",
-      "value": "\\d\\d*(\\.\\d*)?"
+      "value": "\\d\\d*(\\.\\d+)?"
     },
     "quoted_text": {
       "type": "SEQ",

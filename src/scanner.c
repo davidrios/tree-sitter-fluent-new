@@ -41,6 +41,27 @@ void tree_sitter_fluent_external_scanner_deserialize(void *payload,
   }
 }
 
+static bool check_stop_line(TSLexer *lexer) {
+  while (lexer->lookahead == '\n') {
+    lexer->advance(lexer, false);
+
+    if (lexer->lookahead != ' ') {
+      return true;
+    }
+
+    while (lexer->lookahead == ' ') {
+      lexer->advance(lexer, false);
+    }
+
+    if (lexer->lookahead == '.' || lexer->lookahead == '}' ||
+        lexer->lookahead == '[') {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 bool tree_sitter_fluent_external_scanner_scan(void *payload, TSLexer *lexer,
                                               const bool *valid_symbols) {
   Scanner *s = (Scanner *)payload;
@@ -51,22 +72,9 @@ bool tree_sitter_fluent_external_scanner_scan(void *payload, TSLexer *lexer,
     }
 
     if (lexer->lookahead == '\n') {
-      while (lexer->lookahead == '\n') {
-        lexer->advance(lexer, false);
-
-        if (lexer->lookahead != ' ') {
-          lexer->result_symbol = PATTERN_SKIP;
-          return true;
-        }
-
-        while (lexer->lookahead == ' ') {
-          lexer->advance(lexer, false);
-        }
-
-        if (lexer->lookahead == '.') {
-          lexer->result_symbol = PATTERN_SKIP;
-          return true;
-        }
+      if (check_stop_line(lexer)) {
+        lexer->result_symbol = PATTERN_SKIP;
+        return true;
       }
     }
   }
@@ -84,20 +92,7 @@ bool tree_sitter_fluent_external_scanner_scan(void *payload, TSLexer *lexer,
     bool should_end = false;
 
     if (lexer->lookahead == '\n') {
-      lexer->advance(lexer, false);
-      while (lexer->lookahead == '\n') {
-        lexer->advance(lexer, false);
-      }
-
-      if (lexer->lookahead != ' ') {
-        should_end = true;
-      }
-
-      while (lexer->lookahead == ' ') {
-        lexer->advance(lexer, false);
-      }
-
-      if (lexer->lookahead == '.') {
+      if (check_stop_line(lexer)) {
         should_end = true;
       }
     } else if (lexer->lookahead == 0) {
@@ -115,33 +110,19 @@ bool tree_sitter_fluent_external_scanner_scan(void *payload, TSLexer *lexer,
     bool has_content = false;
 
     while (lexer->lookahead != 0) {
-      if (lexer->lookahead == '{') {
+      if (lexer->lookahead == '{' || lexer->lookahead == '}') {
         break;
       }
 
       if (lexer->lookahead == '\n') {
         lexer->mark_end(lexer);
-        lexer->advance(lexer, false);
-
-        while (lexer->lookahead == '\n') {
-          lexer->advance(lexer, false);
-        }
-
-        if (lexer->lookahead != ' ') {
+        if (check_stop_line(lexer)) {
           break;
-        } else {
-          lexer->advance(lexer, false);
-          while (lexer->lookahead == ' ') {
-            lexer->advance(lexer, false);
-          }
-
-          if (lexer->lookahead == '.') {
-            break;
-          }
         }
+      } else {
+        lexer->advance(lexer, false);
       }
 
-      lexer->advance(lexer, false);
       has_content = true;
       lexer->mark_end(lexer);
     }

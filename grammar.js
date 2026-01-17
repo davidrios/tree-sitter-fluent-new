@@ -7,9 +7,6 @@
 /// <reference types="tree-sitter-cli/dsl" />
 // @ts-check
 
-const WHITESPACES = '[ \t]'
-const WHITESPACES_RE = new RegExp(`${WHITESPACES}+`)
-
 module.exports = grammar({
   name: 'fluent',
 
@@ -38,18 +35,17 @@ module.exports = grammar({
         ),
       ),
 
-    whitespaces: () => WHITESPACES_RE,
-    prec_whitespaces: () => token(prec(100, WHITESPACES_RE)),
+    whitespaces: () => / +/,
 
     comment_content: () => seq(/[^\n]+/, '\n'),
-    comment: ($) => seq('#', $.prec_whitespaces, $.comment_content),
-    group_comment: ($) => seq('##', $.prec_whitespaces, $.comment_content),
-    file_comment: ($) => seq('###', $.prec_whitespaces, $.comment_content),
+    comment: ($) => seq('# ', $.comment_content),
+    group_comment: ($) => seq('## ', $.comment_content),
+    file_comment: ($) => seq('### ', $.comment_content),
 
     message: ($) =>
       seq(
         field('id', $.identifier),
-        optional($.prec_whitespaces),
+        optional($.whitespaces),
         $.assignment,
         seq(
           choice(field('value', $.pattern), prec(1, $.pattern_skip)),
@@ -62,19 +58,18 @@ module.exports = grammar({
     attribute: ($) =>
       seq(
         seq('.', field('id', $.identifier)),
-        optional($.prec_whitespaces),
+        optional($.whitespaces),
         $.assignment,
         choice(field('value', $.pattern), prec(1, $.pattern_skip)),
       ),
 
-    identifier: () => /[a-z_][a-z0-9_-]*/,
+    identifier: () => /[a-zA-Z][a-zA-Z0-9_-]*/,
 
     term: ($) =>
       seq(
         field('id', $.term_identifier),
-        optional($.prec_whitespaces),
+        optional($.whitespaces),
         $.assignment,
-        optional($.prec_whitespaces),
         field('value', $.pattern),
       ),
     term_with_doc_comment: ($) => seq(repeat1(prec(1, seq($.comment))), $.term),
@@ -101,16 +96,27 @@ module.exports = grammar({
         $.variable,
       ),
 
-    placeable: ($) =>
+    selector_key: ($) => choice($.identifier, $.number),
+
+    selector_variant: ($) =>
       seq(
-        '{',
-        optional($.whitespaces),
-        $.expression,
-        optional($.whitespaces),
-        '}',
+        /\*?\[[ \n]*/,
+        field('key', $.selector_key),
+        /[\n ]*\]/,
+        field('value', $.pattern),
       ),
 
-    number: () => /\d\d*(\.\d*)?/,
+    placeable: ($) =>
+      seq(
+        /\{[ \n]*/,
+        $.expression,
+        optional(
+          seq(/-> *\n[ \n]*/, field('selectors', repeat1($.selector_variant))),
+        ),
+        /[ \n]*\}/,
+      ),
+
+    number: () => /\d\d*(\.\d+)?/,
 
     quoted_text: ($) =>
       seq('"', repeat(choice($.quoted_escaped, /[^\\"]+/)), '"'),
