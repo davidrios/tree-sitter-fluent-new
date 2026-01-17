@@ -69,7 +69,7 @@ static bool consume_spaces_and_newlines_count(TSLexer *lexer, int *count) {
     }
 
     if (lexer->lookahead == '.' || lexer->lookahead == '}' ||
-        lexer->lookahead == '[') {
+        lexer->lookahead == '[' || lexer->lookahead == '*') {
       lexer->log(lexer, "stop special: '%c'", lexer->lookahead);
       return true;
     }

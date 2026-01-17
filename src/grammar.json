@@ -479,7 +479,7 @@
               "members": [
                 {
                   "type": "PATTERN",
-                  "value": "-> *\\n[ \\n]*"
+                  "value": " *-> *\\n[ \\n]*"
                 },
                 {
                   "type": "FIELD",

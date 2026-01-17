@@ -111,7 +111,10 @@ module.exports = grammar({
         /\{[ \n]*/,
         $.expression,
         optional(
-          seq(/-> *\n[ \n]*/, field('selectors', repeat1($.selector_variant))),
+          seq(
+            / *-> *\n[ \n]*/,
+            field('selectors', repeat1($.selector_variant)),
+          ),
         ),
         /[ \n]*\}/,
       ),
