@@ -259,10 +259,6 @@
         },
         {
           "type": "SYMBOL",
-          "name": "term_next"
-        },
-        {
-          "type": "SYMBOL",
           "name": "term"
         }
       ]
@@ -595,14 +591,6 @@
     {
       "type": "SYMBOL",
       "name": "unfinished_line"
-    },
-    {
-      "type": "SYMBOL",
-      "name": "message_next"
-    },
-    {
-      "type": "SYMBOL",
-      "name": "term_next"
     }
   ],
   "inline": [],

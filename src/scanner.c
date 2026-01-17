@@ -112,9 +112,9 @@ bool tree_sitter_fluent_external_scanner_scan(void *payload, TSLexer *lexer,
     lexer->log(lexer, "no pattern skip");
   }
 
-  if (valid_symbols[PATTERN_START] && !s->is_skip &&
-      s->in_pattern <= MAX_NESTED_PATTERNS) {
+  if (valid_symbols[PATTERN_START] && s->in_pattern < MAX_NESTED_PATTERNS) {
     s->in_pattern += 1;
+    s->is_skip = false;
     while (lexer->lookahead == ' ' || lexer->lookahead == '\t') {
       lexer->advance(lexer, false);
     }
@@ -209,7 +209,7 @@ bool tree_sitter_fluent_external_scanner_scan(void *payload, TSLexer *lexer,
   }
 
   if (valid_symbols[UNFINISHED_LINE] &&
-      (s->is_skip || s->in_pattern > MAX_NESTED_PATTERNS)) {
+      (s->in_pattern >= MAX_NESTED_PATTERNS)) {
     while (lexer->lookahead != '\n') {
       lexer->advance(lexer, false);
     }

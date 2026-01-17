@@ -419,10 +419,6 @@
         {
           "type": "term",
           "named": true
-        },
-        {
-          "type": "term_next",
-          "named": true
         }
       ]
     }
@@ -518,10 +514,6 @@
   },
   {
     "type": "pattern_start",
-    "named": true
-  },
-  {
-    "type": "term_next",
     "named": true
   },
   {
