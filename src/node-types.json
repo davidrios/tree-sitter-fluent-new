@@ -35,10 +35,6 @@
         {
           "type": "pattern_skip",
           "named": true
-        },
-        {
-          "type": "whitespaces",
-          "named": true
         }
       ]
     }
@@ -57,11 +53,6 @@
         }
       ]
     }
-  },
-  {
-    "type": "comment_content",
-    "named": true,
-    "fields": {}
   },
   {
     "type": "expression",
@@ -169,10 +160,6 @@
         },
         {
           "type": "pattern_skip",
-          "named": true
-        },
-        {
-          "type": "whitespaces",
           "named": true
         }
       ]
@@ -363,6 +350,10 @@
         {
           "type": "term_with_doc_comment",
           "named": true
+        },
+        {
+          "type": "unfinished_line",
+          "named": true
         }
       ]
     }
@@ -393,15 +384,11 @@
       }
     },
     "children": {
-      "multiple": true,
+      "multiple": false,
       "required": true,
       "types": [
         {
           "type": "assignment",
-          "named": true
-        },
-        {
-          "type": "whitespaces",
           "named": true
         }
       ]
@@ -432,6 +419,10 @@
         {
           "type": "term",
           "named": true
+        },
+        {
+          "type": "term_next",
+          "named": true
         }
       ]
     }
@@ -440,10 +431,6 @@
     "type": "variable",
     "named": true,
     "fields": {}
-  },
-  {
-    "type": "\n",
-    "named": false
   },
   {
     "type": "\"",
@@ -498,6 +485,10 @@
     "named": true
   },
   {
+    "type": "comment_content",
+    "named": true
+  },
+  {
     "type": "identifier",
     "named": false
   },
@@ -530,7 +521,11 @@
     "named": true
   },
   {
-    "type": "whitespaces",
+    "type": "term_next",
+    "named": true
+  },
+  {
+    "type": "unfinished_line",
     "named": true
   },
   {

@@ -1,21 +1,26 @@
 #include "tree_sitter/alloc.h"
 #include "tree_sitter/parser.h"
 
+#define MAX_NESTED_PATTERNS 2
+
 enum TokenType {
   PATTERN_START,
   PATTERN_PURE_TEXT,
   PATTERN_END,
   PATTERN_SKIP,
   BLANK_LINES,
+  UNFINISHED_LINE,
 };
 
 typedef struct {
   uint8_t in_pattern;
+  bool is_skip;
 } Scanner;
 
 void *tree_sitter_fluent_external_scanner_create() {
   Scanner *s = (Scanner *)ts_malloc(sizeof(Scanner));
   s->in_pattern = 0;
+  s->is_skip = false;
   return s;
 }
 
@@ -27,7 +32,8 @@ unsigned tree_sitter_fluent_external_scanner_serialize(void *payload,
                                                        char *buffer) {
   Scanner *s = (Scanner *)payload;
   buffer[0] = s->in_pattern;
-  return 1;
+  buffer[1] = s->is_skip ? 1 : 0;
+  return 2;
 }
 
 void tree_sitter_fluent_external_scanner_deserialize(void *payload,
@@ -36,8 +42,10 @@ void tree_sitter_fluent_external_scanner_deserialize(void *payload,
   Scanner *s = (Scanner *)payload;
   if (length > 0) {
     s->in_pattern = buffer[0];
+    s->is_skip = buffer[1];
   } else {
     s->in_pattern = 0;
+    s->is_skip = false;
   }
 }
 
@@ -95,6 +103,7 @@ bool tree_sitter_fluent_external_scanner_scan(void *payload, TSLexer *lexer,
     if (lexer->lookahead == '\n' || lexer->lookahead == ' ') {
       lexer->log(lexer, "testing pattern skip");
       if (consume_spaces_and_newlines(lexer)) {
+        s->is_skip = true;
         lexer->result_symbol = PATTERN_SKIP;
         lexer->log(lexer, "return pattern skip");
         return true;
@@ -103,7 +112,8 @@ bool tree_sitter_fluent_external_scanner_scan(void *payload, TSLexer *lexer,
     lexer->log(lexer, "no pattern skip");
   }
 
-  if (valid_symbols[PATTERN_START]) {
+  if (valid_symbols[PATTERN_START] && !s->is_skip &&
+      s->in_pattern <= MAX_NESTED_PATTERNS) {
     s->in_pattern += 1;
     while (lexer->lookahead == ' ' || lexer->lookahead == '\t') {
       lexer->advance(lexer, false);
@@ -115,7 +125,7 @@ bool tree_sitter_fluent_external_scanner_scan(void *payload, TSLexer *lexer,
 
   bool encountered_special = false;
 
-  if (valid_symbols[PATTERN_PURE_TEXT] && s->in_pattern) {
+  if (valid_symbols[PATTERN_PURE_TEXT] && s->in_pattern && !s->is_skip) {
     lexer->log(lexer, "testing pure text");
     bool has_content = false;
 
@@ -195,6 +205,20 @@ bool tree_sitter_fluent_external_scanner_scan(void *payload, TSLexer *lexer,
     lexer->mark_end(lexer);
     lexer->result_symbol = BLANK_LINES;
     lexer->log(lexer, "return BLANK_LINES");
+    return true;
+  }
+
+  if (valid_symbols[UNFINISHED_LINE] &&
+      (s->is_skip || s->in_pattern > MAX_NESTED_PATTERNS)) {
+    while (lexer->lookahead != '\n') {
+      lexer->advance(lexer, false);
+    }
+    lexer->advance(lexer, false);
+    lexer->mark_end(lexer);
+    lexer->result_symbol = UNFINISHED_LINE;
+    s->is_skip = false;
+    s->in_pattern = 0;
+    lexer->log(lexer, "return UNFINISHED_LINE");
     return true;
   }
 

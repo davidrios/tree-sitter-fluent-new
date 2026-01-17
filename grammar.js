@@ -17,10 +17,10 @@ module.exports = grammar({
     $.pattern_end,
     $.pattern_skip,
     $.blank_lines,
+    $.unfinished_line,
   ],
 
   rules: {
-    // debug: ($) => repeat(choice($.blank_lines)),
     source: ($) =>
       repeat(
         choice(
@@ -32,12 +32,11 @@ module.exports = grammar({
           $.term,
           $.term_with_doc_comment,
           $.blank_lines,
+          $.unfinished_line,
         ),
       ),
 
-    whitespaces: () => / +/,
-
-    comment_content: () => seq(/[^\n]+/, '\n'),
+    comment_content: () => /[^\n]+\n/,
     comment: ($) => seq('# ', $.comment_content),
     group_comment: ($) => seq('## ', $.comment_content),
     file_comment: ($) => seq('### ', $.comment_content),
@@ -45,22 +44,22 @@ module.exports = grammar({
     message: ($) =>
       seq(
         field('id', $.identifier),
-        optional($.whitespaces),
+        / */,
         $.assignment,
         seq(
-          choice(field('value', $.pattern), prec(1, $.pattern_skip)),
+          choice(field('value', $.pattern), $.pattern_skip),
           field('attribute', repeat($.attribute)),
         ),
       ),
     message_with_doc_comment: ($) =>
-      seq(repeat1(prec(1, seq($.comment))), $.message),
+      seq(repeat1(prec(1, $.comment)), $.message),
 
     attribute: ($) =>
       seq(
         seq('.', field('id', $.identifier)),
-        optional($.whitespaces),
+        / */,
         $.assignment,
-        choice(field('value', $.pattern), prec(1, $.pattern_skip)),
+        choice(field('value', $.pattern), $.pattern_skip),
       ),
 
     identifier: () => /[a-zA-Z][a-zA-Z0-9_-]*/,
@@ -68,11 +67,11 @@ module.exports = grammar({
     term: ($) =>
       seq(
         field('id', $.term_identifier),
-        optional($.whitespaces),
+        / */,
         $.assignment,
         field('value', $.pattern),
       ),
-    term_with_doc_comment: ($) => seq(repeat1(prec(1, seq($.comment))), $.term),
+    term_with_doc_comment: ($) => seq(repeat1(prec(1, $.comment)), $.term),
 
     term_identifier: ($) => seq('-', alias($.identifier, 'identifier')),
 
