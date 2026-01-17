@@ -106,18 +106,10 @@ module.exports = grammar({
         field('value', $.pattern),
       ),
 
+    selectors: ($) => seq(/ *-> *\n[ \n]*/, repeat1($.selector_variant), '}'),
+
     placeable: ($) =>
-      seq(
-        /\{[ \n]*/,
-        $.expression,
-        optional(
-          seq(
-            / *-> *\n[ \n]*/,
-            field('selectors', repeat1($.selector_variant)),
-          ),
-        ),
-        /[ \n]*\}/,
-      ),
+      seq(/\{[ \n]*/, $.expression, choice($.selectors, /[ \n]*\}/)),
 
     number: () => /\d\d*(\.\d+)?/,
 

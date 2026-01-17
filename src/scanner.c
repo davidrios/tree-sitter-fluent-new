@@ -10,12 +10,12 @@ enum TokenType {
 };
 
 typedef struct {
-  bool in_pattern;
+  uint8_t in_pattern;
 } Scanner;
 
 void *tree_sitter_fluent_external_scanner_create() {
   Scanner *s = (Scanner *)ts_malloc(sizeof(Scanner));
-  s->in_pattern = false;
+  s->in_pattern = 0;
   return s;
 }
 
@@ -26,7 +26,7 @@ void tree_sitter_fluent_external_scanner_destroy(void *payload) {
 unsigned tree_sitter_fluent_external_scanner_serialize(void *payload,
                                                        char *buffer) {
   Scanner *s = (Scanner *)payload;
-  buffer[0] = s->in_pattern ? 1 : 0;
+  buffer[0] = s->in_pattern;
   return 1;
 }
 
@@ -35,9 +35,9 @@ void tree_sitter_fluent_external_scanner_deserialize(void *payload,
                                                      unsigned length) {
   Scanner *s = (Scanner *)payload;
   if (length > 0) {
-    s->in_pattern = buffer[0] == 1;
+    s->in_pattern = buffer[0];
   } else {
-    s->in_pattern = false;
+    s->in_pattern = 0;
   }
 }
 
@@ -104,7 +104,7 @@ bool tree_sitter_fluent_external_scanner_scan(void *payload, TSLexer *lexer,
   }
 
   if (valid_symbols[PATTERN_START]) {
-    s->in_pattern = true;
+    s->in_pattern += 1;
     while (lexer->lookahead == ' ' || lexer->lookahead == '\t') {
       lexer->advance(lexer, false);
     }
@@ -180,7 +180,7 @@ bool tree_sitter_fluent_external_scanner_scan(void *payload, TSLexer *lexer,
       bool stopped = consume_spaces_and_newlines_count(lexer, &count);
     }
     if (encountered_special || (count > 0 && stopped)) {
-      s->in_pattern = false;
+      s->in_pattern -= 1;
       lexer->result_symbol = PATTERN_END;
       lexer->mark_end(lexer);
       lexer->log(lexer, "return pattern end");

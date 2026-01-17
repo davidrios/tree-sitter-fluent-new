@@ -460,6 +460,26 @@
         }
       ]
     },
+    "selectors": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "PATTERN",
+          "value": " *-> *\\n[ \\n]*"
+        },
+        {
+          "type": "REPEAT1",
+          "content": {
+            "type": "SYMBOL",
+            "name": "selector_variant"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "}"
+        }
+      ]
+    },
     "placeable": {
       "type": "SEQ",
       "members": [
@@ -475,33 +495,14 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "SEQ",
-              "members": [
-                {
-                  "type": "PATTERN",
-                  "value": " *-> *\\n[ \\n]*"
-                },
-                {
-                  "type": "FIELD",
-                  "name": "selectors",
-                  "content": {
-                    "type": "REPEAT1",
-                    "content": {
-                      "type": "SYMBOL",
-                      "name": "selector_variant"
-                    }
-                  }
-                }
-              ]
+              "type": "SYMBOL",
+              "name": "selectors"
             },
             {
-              "type": "BLANK"
+              "type": "PATTERN",
+              "value": "[ \\n]*\\}"
             }
           ]
-        },
-        {
-          "type": "PATTERN",
-          "value": "[ \\n]*\\}"
         }
       ]
     },

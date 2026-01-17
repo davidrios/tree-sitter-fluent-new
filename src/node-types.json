@@ -227,24 +227,17 @@
   {
     "type": "placeable",
     "named": true,
-    "fields": {
-      "selectors": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "selector_variant",
-            "named": true
-          }
-        ]
-      }
-    },
+    "fields": {},
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": true,
       "types": [
         {
           "type": "expression",
+          "named": true
+        },
+        {
+          "type": "selectors",
           "named": true
         }
       ]
@@ -313,6 +306,21 @@
           }
         ]
       }
+    }
+  },
+  {
+    "type": "selectors",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "selector_variant",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -524,5 +532,9 @@
   {
     "type": "whitespaces",
     "named": true
+  },
+  {
+    "type": "}",
+    "named": false
   }
 ]
