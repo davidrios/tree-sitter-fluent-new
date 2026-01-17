@@ -40,15 +40,19 @@
     }
   },
   {
-    "type": "comment",
+    "type": "comment_block",
     "named": true,
     "fields": {},
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": true,
       "types": [
         {
-          "type": "comment_content",
+          "type": "close_comment_block",
+          "named": true
+        },
+        {
+          "type": "content",
           "named": true
         }
       ]
@@ -160,25 +164,6 @@
         },
         {
           "type": "pattern_skip",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "message_with_doc_comment",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "comment",
-          "named": true
-        },
-        {
-          "type": "message",
           "named": true
         }
       ]
@@ -324,7 +309,7 @@
           "named": true
         },
         {
-          "type": "comment",
+          "type": "comment_block",
           "named": true
         },
         {
@@ -340,19 +325,15 @@
           "named": true
         },
         {
-          "type": "message_with_doc_comment",
-          "named": true
-        },
-        {
           "type": "term",
           "named": true
         },
         {
-          "type": "term_with_doc_comment",
+          "type": "unfinished_line",
           "named": true
         },
         {
-          "type": "unfinished_line",
+          "type": "with_doc_comment",
           "named": true
         }
       ]
@@ -405,7 +386,12 @@
     "fields": {}
   },
   {
-    "type": "term_with_doc_comment",
+    "type": "variable",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "with_doc_comment",
     "named": true,
     "fields": {},
     "children": {
@@ -413,7 +399,11 @@
       "required": true,
       "types": [
         {
-          "type": "comment",
+          "type": "comment_block",
+          "named": true
+        },
+        {
+          "type": "message",
           "named": true
         },
         {
@@ -422,11 +412,6 @@
         }
       ]
     }
-  },
-  {
-    "type": "variable",
-    "named": true,
-    "fields": {}
   },
   {
     "type": "\"",
@@ -481,16 +466,24 @@
     "named": true
   },
   {
+    "type": "close_comment_block",
+    "named": true
+  },
+  {
     "type": "comment_content",
+    "named": true
+  },
+  {
+    "type": "content",
+    "named": true
+  },
+  {
+    "type": "identifier",
     "named": true
   },
   {
     "type": "identifier",
     "named": false
-  },
-  {
-    "type": "identifier",
-    "named": true
   },
   {
     "type": "message_id",

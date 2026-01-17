@@ -18,28 +18,34 @@ module.exports = grammar({
     $.pattern_skip,
     $.blank_lines,
     $.unfinished_line,
+    $.close_comment_block,
   ],
 
   rules: {
     source: ($) =>
       repeat(
         choice(
-          $.comment,
+          $.comment_block,
           $.group_comment,
           $.file_comment,
           $.message,
-          $.message_with_doc_comment,
           $.term,
-          $.term_with_doc_comment,
+          $.with_doc_comment,
           $.blank_lines,
           $.unfinished_line,
         ),
       ),
 
     comment_content: () => /[^\n]+\n/,
-    comment: ($) => seq('# ', $.comment_content),
+    _base_comment: ($) => seq('# ', alias($.comment_content, $.content)),
+    _comment_block: ($) => seq(repeat1($._base_comment)),
+    comment_block: ($) => seq($._comment_block, $.close_comment_block),
+
     group_comment: ($) => seq('## ', $.comment_content),
     file_comment: ($) => seq('### ', $.comment_content),
+
+    with_doc_comment: ($) =>
+      seq(alias($._comment_block, $.comment_block), choice($.message, $.term)),
 
     message: ($) =>
       seq(
@@ -51,8 +57,6 @@ module.exports = grammar({
           field('attribute', repeat($.attribute)),
         ),
       ),
-    message_with_doc_comment: ($) =>
-      seq(repeat1(prec(1, $.comment)), $.message),
 
     attribute: ($) =>
       seq(
@@ -71,7 +75,6 @@ module.exports = grammar({
         $.assignment,
         field('value', $.pattern),
       ),
-    term_with_doc_comment: ($) => seq(repeat1(prec(1, $.comment)), $.term),
 
     term_identifier: ($) => seq('-', alias($.identifier, 'identifier')),
 

@@ -10,6 +10,7 @@ enum TokenType {
   PATTERN_SKIP,
   BLANK_LINES,
   UNFINISHED_LINE,
+  CLOSE_COMMENT_BLOCK,
 };
 
 typedef struct {
@@ -47,6 +48,27 @@ void tree_sitter_fluent_external_scanner_deserialize(void *payload,
     s->in_pattern = 0;
     s->is_skip = false;
   }
+}
+
+static bool is_close_comment_block(TSLexer *lexer) {
+  bool is_hash = lexer->lookahead == '#';
+
+  if (lexer->lookahead != '\n' && !is_hash) {
+    return false;
+  }
+
+  lexer->mark_end(lexer);
+  lexer->advance(lexer, false);
+
+  if (!is_hash && lexer->lookahead == '#') {
+    lexer->advance(lexer, false);
+  }
+
+  if (lexer->lookahead != ' ') {
+    return true;
+  }
+
+  return false;
 }
 
 // returns true if it stopped at a special stop char
@@ -97,6 +119,10 @@ bool tree_sitter_fluent_external_scanner_scan(void *payload, TSLexer *lexer,
                                               const bool *valid_symbols) {
   Scanner *s = (Scanner *)payload;
 
+  if (lexer->lookahead == 0) {
+    return false;
+  }
+
   lexer->log(lexer, "starting scan");
 
   if (valid_symbols[PATTERN_SKIP]) {
@@ -112,7 +138,8 @@ bool tree_sitter_fluent_external_scanner_scan(void *payload, TSLexer *lexer,
     lexer->log(lexer, "no pattern skip");
   }
 
-  if (valid_symbols[PATTERN_START] && s->in_pattern < MAX_NESTED_PATTERNS) {
+  if (valid_symbols[PATTERN_START] && s->in_pattern < MAX_NESTED_PATTERNS &&
+      lexer->lookahead != 0) {
     s->in_pattern += 1;
     s->is_skip = false;
     while (lexer->lookahead == ' ' || lexer->lookahead == '\t') {
@@ -208,8 +235,7 @@ bool tree_sitter_fluent_external_scanner_scan(void *payload, TSLexer *lexer,
     return true;
   }
 
-  if (valid_symbols[UNFINISHED_LINE] &&
-      (s->in_pattern >= MAX_NESTED_PATTERNS)) {
+  if (valid_symbols[UNFINISHED_LINE] && s->in_pattern >= MAX_NESTED_PATTERNS) {
     while (lexer->lookahead != '\n') {
       lexer->advance(lexer, false);
     }
@@ -219,6 +245,12 @@ bool tree_sitter_fluent_external_scanner_scan(void *payload, TSLexer *lexer,
     s->is_skip = false;
     s->in_pattern = 0;
     lexer->log(lexer, "return UNFINISHED_LINE");
+    return true;
+  }
+
+  if (valid_symbols[CLOSE_COMMENT_BLOCK] && is_close_comment_block(lexer)) {
+    lexer->result_symbol = CLOSE_COMMENT_BLOCK;
+    lexer->log(lexer, "return CLOSE_COMMENT_BLOCK");
     return true;
   }
 
