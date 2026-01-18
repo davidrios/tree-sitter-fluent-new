@@ -158,8 +158,8 @@
           "value": " *"
         },
         {
-          "type": "SYMBOL",
-          "name": "assignment"
+          "type": "STRING",
+          "value": "="
         },
         {
           "type": "SEQ",
@@ -221,8 +221,8 @@
           "value": " *"
         },
         {
-          "type": "SYMBOL",
-          "name": "assignment"
+          "type": "STRING",
+          "value": "="
         },
         {
           "type": "CHOICE",
@@ -263,8 +263,8 @@
           "value": " *"
         },
         {
-          "type": "SYMBOL",
-          "name": "assignment"
+          "type": "STRING",
+          "value": "="
         },
         {
           "type": "FIELD",
@@ -293,10 +293,6 @@
           "value": "identifier"
         }
       ]
-    },
-    "assignment": {
-      "type": "STRING",
-      "value": "="
     },
     "variable": {
       "type": "SEQ",

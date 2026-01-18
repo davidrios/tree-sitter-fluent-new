@@ -25,10 +25,10 @@ enum ts_symbol_identifiers {
   anon_sym_POUND_POUND = 3,
   anon_sym_POUND_POUND_POUND = 4,
   aux_sym_message_token1 = 5,
-  anon_sym_DOT = 6,
-  sym_identifier = 7,
-  anon_sym_DASH = 8,
-  sym_assignment = 9,
+  anon_sym_EQ = 6,
+  anon_sym_DOT = 7,
+  sym_identifier = 8,
+  anon_sym_DASH = 9,
   anon_sym_DOLLAR = 10,
   aux_sym_selector_variant_token1 = 11,
   aux_sym_selector_variant_token2 = 12,
@@ -90,10 +90,10 @@ static const char * const ts_symbol_names[] = {
   [anon_sym_POUND_POUND] = "## ",
   [anon_sym_POUND_POUND_POUND] = "### ",
   [aux_sym_message_token1] = "message_token1",
+  [anon_sym_EQ] = "=",
   [anon_sym_DOT] = ".",
   [sym_identifier] = "identifier",
   [anon_sym_DASH] = "-",
-  [sym_assignment] = "assignment",
   [anon_sym_DOLLAR] = "$",
   [aux_sym_selector_variant_token1] = "selector_variant_token1",
   [aux_sym_selector_variant_token2] = "selector_variant_token2",
@@ -155,10 +155,10 @@ static const TSSymbol ts_symbol_map[] = {
   [anon_sym_POUND_POUND] = anon_sym_POUND_POUND,
   [anon_sym_POUND_POUND_POUND] = anon_sym_POUND_POUND_POUND,
   [aux_sym_message_token1] = aux_sym_message_token1,
+  [anon_sym_EQ] = anon_sym_EQ,
   [anon_sym_DOT] = anon_sym_DOT,
   [sym_identifier] = sym_identifier,
   [anon_sym_DASH] = anon_sym_DASH,
-  [sym_assignment] = sym_assignment,
   [anon_sym_DOLLAR] = anon_sym_DOLLAR,
   [aux_sym_selector_variant_token1] = aux_sym_selector_variant_token1,
   [aux_sym_selector_variant_token2] = aux_sym_selector_variant_token2,
@@ -238,6 +238,10 @@ static const TSSymbolMetadata ts_symbol_metadata[] = {
     .visible = false,
     .named = false,
   },
+  [anon_sym_EQ] = {
+    .visible = true,
+    .named = false,
+  },
   [anon_sym_DOT] = {
     .visible = true,
     .named = false,
@@ -249,10 +253,6 @@ static const TSSymbolMetadata ts_symbol_metadata[] = {
   [anon_sym_DASH] = {
     .visible = true,
     .named = false,
-  },
-  [sym_assignment] = {
-    .visible = true,
-    .named = true,
   },
   [anon_sym_DOLLAR] = {
     .visible = true,
@@ -636,8 +636,8 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
         '#', 5,
         '$', 31,
         '*', 11,
-        '-', 29,
-        '.', 26,
+        '-', 30,
+        '.', 27,
         '[', 32,
         '\\', 9,
         ']', 33,
@@ -646,9 +646,9 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
       );
       if (('0' <= lookahead && lookahead <= '9')) ADVANCE(38);
       if (('A' <= lookahead && lookahead <= 'F') ||
-          ('a' <= lookahead && lookahead <= 'f')) ADVANCE(27);
+          ('a' <= lookahead && lookahead <= 'f')) ADVANCE(28);
       if (('G' <= lookahead && lookahead <= 'Z') ||
-          ('g' <= lookahead && lookahead <= 'z')) ADVANCE(27);
+          ('g' <= lookahead && lookahead <= 'z')) ADVANCE(28);
       END_STATE();
     case 1:
       if (lookahead == '\n') ADVANCE(34);
@@ -731,9 +731,9 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
         '#', 5,
         '$', 31,
         '*', 11,
-        '-', 28,
-        '.', 26,
-        '=', 30,
+        '-', 29,
+        '.', 27,
+        '=', 26,
         '[', 32,
         ']', 33,
         '{', 36,
@@ -743,7 +743,7 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
       );
       if (('0' <= lookahead && lookahead <= '9')) ADVANCE(38);
       if (('A' <= lookahead && lookahead <= 'Z') ||
-          ('a' <= lookahead && lookahead <= 'z')) ADVANCE(27);
+          ('a' <= lookahead && lookahead <= 'z')) ADVANCE(28);
       END_STATE();
     case 18:
       ACCEPT_TOKEN(ts_builtin_sym_end);
@@ -780,25 +780,25 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
       if (lookahead == ' ') ADVANCE(25);
       END_STATE();
     case 26:
-      ACCEPT_TOKEN(anon_sym_DOT);
+      ACCEPT_TOKEN(anon_sym_EQ);
       END_STATE();
     case 27:
+      ACCEPT_TOKEN(anon_sym_DOT);
+      END_STATE();
+    case 28:
       ACCEPT_TOKEN(sym_identifier);
       if (lookahead == '-' ||
           ('0' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'Z') ||
           lookahead == '_' ||
-          ('a' <= lookahead && lookahead <= 'z')) ADVANCE(27);
-      END_STATE();
-    case 28:
-      ACCEPT_TOKEN(anon_sym_DASH);
+          ('a' <= lookahead && lookahead <= 'z')) ADVANCE(28);
       END_STATE();
     case 29:
       ACCEPT_TOKEN(anon_sym_DASH);
-      if (lookahead == '>') ADVANCE(1);
       END_STATE();
     case 30:
-      ACCEPT_TOKEN(sym_assignment);
+      ACCEPT_TOKEN(anon_sym_DASH);
+      if (lookahead == '>') ADVANCE(1);
       END_STATE();
     case 31:
       ACCEPT_TOKEN(anon_sym_DOLLAR);
@@ -1515,7 +1515,7 @@ static const uint16_t ts_small_parse_table[] = {
       sym__hexdigit,
   [653] = 1,
     ACTIONS(198), 1,
-      sym_assignment,
+      anon_sym_EQ,
   [657] = 1,
     ACTIONS(200), 1,
       aux_sym_message_token1,
@@ -1554,7 +1554,7 @@ static const uint16_t ts_small_parse_table[] = {
       aux_sym_message_token1,
   [705] = 1,
     ACTIONS(224), 1,
-      sym_assignment,
+      anon_sym_EQ,
   [709] = 1,
     ACTIONS(226), 1,
       sym_comment_content,
@@ -1566,7 +1566,7 @@ static const uint16_t ts_small_parse_table[] = {
       sym__hexdigit,
   [721] = 1,
     ACTIONS(232), 1,
-      sym_assignment,
+      anon_sym_EQ,
   [725] = 1,
     ACTIONS(234), 1,
       sym__hexdigit,

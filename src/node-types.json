@@ -25,13 +25,9 @@
       }
     },
     "children": {
-      "multiple": true,
-      "required": true,
+      "multiple": false,
+      "required": false,
       "types": [
-        {
-          "type": "assignment",
-          "named": true
-        },
         {
           "type": "pattern_skip",
           "named": true
@@ -155,13 +151,9 @@
       }
     },
     "children": {
-      "multiple": true,
-      "required": true,
+      "multiple": false,
+      "required": false,
       "types": [
-        {
-          "type": "assignment",
-          "named": true
-        },
         {
           "type": "pattern_skip",
           "named": true
@@ -363,16 +355,6 @@
           }
         ]
       }
-    },
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "assignment",
-          "named": true
-        }
-      ]
     }
   },
   {
@@ -442,6 +424,10 @@
     "named": false
   },
   {
+    "type": "=",
+    "named": false
+  },
+  {
     "type": "\\\"",
     "named": false
   },
@@ -456,10 +442,6 @@
   {
     "type": "\\u",
     "named": false
-  },
-  {
-    "type": "assignment",
-    "named": true
   },
   {
     "type": "blank_lines",

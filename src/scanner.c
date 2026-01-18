@@ -119,11 +119,27 @@ bool tree_sitter_fluent_external_scanner_scan(void *payload, TSLexer *lexer,
                                               const bool *valid_symbols) {
   Scanner *s = (Scanner *)payload;
 
+  lexer->log(lexer, "starting scan");
+
   if (lexer->lookahead == 0) {
+    if (valid_symbols[PATTERN_END]) {
+      lexer->result_symbol = PATTERN_END;
+      lexer->log(lexer, "return pattern end");
+      return true;
+    }
+    if (valid_symbols[CLOSE_COMMENT_BLOCK]) {
+      lexer->result_symbol = CLOSE_COMMENT_BLOCK;
+      lexer->log(lexer, "return CLOSE_COMMENT_BLOCK");
+      return true;
+    }
+    if (valid_symbols[PATTERN_SKIP]) {
+      lexer->result_symbol = PATTERN_SKIP;
+      lexer->log(lexer, "return pattern end");
+      return true;
+    }
+
     return false;
   }
-
-  lexer->log(lexer, "starting scan");
 
   if (valid_symbols[PATTERN_SKIP]) {
     if (lexer->lookahead == '\n' || lexer->lookahead == ' ') {
@@ -195,7 +211,6 @@ bool tree_sitter_fluent_external_scanner_scan(void *payload, TSLexer *lexer,
       }
 
       lexer->advance(lexer, false);
-      lexer->log(lexer, "consumed non-zero");
       has_content = true;
       lexer->mark_end(lexer);
     }
@@ -214,12 +229,12 @@ bool tree_sitter_fluent_external_scanner_scan(void *payload, TSLexer *lexer,
     int count = 0;
     bool stopped = false;
     if (!encountered_special) {
+      lexer->mark_end(lexer);
       bool stopped = consume_spaces_and_newlines_count(lexer, &count);
     }
     if (encountered_special || (count > 0 && stopped)) {
       s->in_pattern -= 1;
       lexer->result_symbol = PATTERN_END;
-      lexer->mark_end(lexer);
       lexer->log(lexer, "return pattern end");
       return true;
     }
