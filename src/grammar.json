@@ -494,8 +494,13 @@
                           "name": "positional_arguments"
                         },
                         {
-                          "type": "SYMBOL",
-                          "name": "_end_positional_args"
+                          "type": "ALIAS",
+                          "content": {
+                            "type": "SYMBOL",
+                            "name": "_end_positional_args"
+                          },
+                          "named": false,
+                          "value": ","
                         }
                       ]
                     },

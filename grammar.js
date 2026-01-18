@@ -120,7 +120,9 @@ module.exports = grammar({
         alias(/[ \n]*\([ \n]*/, '('),
         optional(
           seq(
-            optional(seq($.positional_arguments, $._end_positional_args)),
+            optional(
+              seq($.positional_arguments, alias($._end_positional_args, ',')),
+            ),
             optional($.named_arguments),
           ),
         ),
