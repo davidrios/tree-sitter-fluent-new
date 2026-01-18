@@ -105,6 +105,10 @@ static bool consume_spaces_and_newlines(TSLexer *lexer) {
 }
 
 static bool is_close_comment_block(TSLexer *lexer) {
+  if (lexer->lookahead == '\n') {
+    return true;
+  }
+
   bool is_hash = lexer->lookahead == '#';
 
   if (lexer->lookahead != '\n' && !is_hash) {
