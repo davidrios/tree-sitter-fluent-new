@@ -533,11 +533,11 @@
     "named": true,
     "fields": {},
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": false,
       "types": [
         {
-          "type": "text",
+          "type": "escaped_literal",
           "named": true
         }
       ]
@@ -615,21 +615,6 @@
       "types": [
         {
           "type": "function_call",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "text",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "escaped_literal",
           "named": true
         }
       ]

@@ -899,25 +899,20 @@
           "value": "\""
         },
         {
-          "type": "ALIAS",
+          "type": "REPEAT",
           "content": {
-            "type": "REPEAT",
-            "content": {
-              "type": "CHOICE",
-              "members": [
-                {
-                  "type": "SYMBOL",
-                  "name": "escaped_literal"
-                },
-                {
-                  "type": "PATTERN",
-                  "value": "[^\\\\\"]+"
-                }
-              ]
-            }
-          },
-          "named": true,
-          "value": "text"
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "escaped_literal"
+              },
+              {
+                "type": "PATTERN",
+                "value": "[^\\\\\"]+"
+              }
+            ]
+          }
         },
         {
           "type": "STRING",

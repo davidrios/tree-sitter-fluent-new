@@ -203,11 +203,7 @@ module.exports = grammar({
     number_literal: () => /\d\d*(\.\d+)?/,
 
     string_literal: ($) =>
-      seq(
-        '"',
-        alias(repeat(choice($.escaped_literal, /[^\\"]+/)), $.text),
-        '"',
-      ),
+      seq('"', repeat(choice($.escaped_literal, /[^\\"]+/)), '"'),
 
     escaped_literal: () =>
       choice(
