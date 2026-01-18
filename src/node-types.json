@@ -74,11 +74,6 @@
     }
   },
   {
-    "type": "escaped_literal",
-    "named": true,
-    "fields": {}
-  },
-  {
     "type": "file_comment",
     "named": true,
     "fields": {}
@@ -682,16 +677,12 @@
     "named": false
   },
   {
-    "type": "\\\"",
-    "named": false
-  },
-  {
-    "type": "\\\\",
-    "named": false
-  },
-  {
     "type": "]",
     "named": false
+  },
+  {
+    "type": "escaped_literal",
+    "named": true
   },
   {
     "type": "function_name",

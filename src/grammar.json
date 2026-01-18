@@ -144,8 +144,8 @@
           }
         },
         {
-          "type": "PATTERN",
-          "value": " *"
+          "type": "SYMBOL",
+          "name": "_s"
         },
         {
           "type": "STRING",
@@ -202,8 +202,8 @@
           }
         },
         {
-          "type": "PATTERN",
-          "value": " *"
+          "type": "SYMBOL",
+          "name": "_s"
         },
         {
           "type": "STRING",
@@ -244,8 +244,8 @@
           }
         },
         {
-          "type": "PATTERN",
-          "value": " *"
+          "type": "SYMBOL",
+          "name": "_s"
         },
         {
           "type": "STRING",
@@ -558,8 +558,8 @@
           "value": "function_name"
         },
         {
-          "type": "PATTERN",
-          "value": " *"
+          "type": "SYMBOL",
+          "name": "_s"
         },
         {
           "type": "SYMBOL",
@@ -642,8 +642,8 @@
           ]
         },
         {
-          "type": "PATTERN",
-          "value": "[ \\n]*"
+          "type": "SYMBOL",
+          "name": "_ws"
         },
         {
           "type": "CHOICE",
@@ -858,8 +858,11 @@
       ]
     },
     "number_literal": {
-      "type": "PATTERN",
-      "value": "\\d\\d*(\\.\\d+)?"
+      "type": "TOKEN",
+      "content": {
+        "type": "PATTERN",
+        "value": "\\d\\d*(\\.\\d+)?"
+      }
     },
     "string_literal": {
       "type": "SEQ",
@@ -891,25 +894,36 @@
       ]
     },
     "escaped_literal": {
-      "type": "CHOICE",
-      "members": [
-        {
-          "type": "PATTERN",
-          "value": "\\\\u[0-9a-fA-F]{4}"
-        },
-        {
-          "type": "PATTERN",
-          "value": "\\\\U[0-9a-fA-F]{6}"
-        },
-        {
-          "type": "STRING",
-          "value": "\\\""
-        },
-        {
-          "type": "STRING",
-          "value": "\\\\"
-        }
-      ]
+      "type": "TOKEN",
+      "content": {
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "PATTERN",
+            "value": "\\\\u[0-9a-fA-F]{4}"
+          },
+          {
+            "type": "PATTERN",
+            "value": "\\\\U[0-9a-fA-F]{6}"
+          },
+          {
+            "type": "STRING",
+            "value": "\\\""
+          },
+          {
+            "type": "STRING",
+            "value": "\\\\"
+          }
+        ]
+      }
+    },
+    "_s": {
+      "type": "PATTERN",
+      "value": " *"
+    },
+    "_ws": {
+      "type": "PATTERN",
+      "value": "[ \\n]*"
     }
   },
   "extras": [],

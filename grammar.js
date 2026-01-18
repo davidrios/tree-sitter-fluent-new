@@ -56,7 +56,7 @@ module.exports = grammar({
     message: ($) =>
       seq(
         field('id', $.identifier),
-        / */,
+        $._s,
         '=',
         choice(field('value', $.pattern), $._pattern_skip),
         field('attributes', alias(repeat($.attribute), $.attributes)),
@@ -66,7 +66,7 @@ module.exports = grammar({
       seq(
         '.',
         field('id', $.identifier),
-        / */,
+        $._s,
         '=',
         choice(field('value', $.pattern), $._pattern_skip),
       ),
@@ -76,7 +76,7 @@ module.exports = grammar({
     term: ($) =>
       seq(
         field('id', $.term_identifier),
-        / */,
+        $._s,
         '=',
         field('value', $.pattern),
         field('attributes', alias(repeat($.attribute), $.attributes)),
@@ -129,11 +129,8 @@ module.exports = grammar({
 
     function_reference: ($) =>
       seq(
-        alias(
-          field('id', token(prec(1, /[A-Z][A-Z0-9_-]*/))),
-          $.function_name,
-        ),
-        / */,
+        alias(field('id', token(prec(1, /[A-Z][A-Z0-9_-]*/))), $.function_name),
+        $._s,
         $.function_call,
       ),
 
@@ -147,7 +144,7 @@ module.exports = grammar({
       seq(
         field('id', $.term_identifier),
         optional(seq('.', field('attribute', $.identifier))),
-        /[ \n]*/,
+        $._ws,
         optional($.function_call),
       ),
 
@@ -193,17 +190,22 @@ module.exports = grammar({
         ),
       ),
 
-    number_literal: () => /\d\d*(\.\d+)?/,
+    number_literal: () => token(/\d\d*(\.\d+)?/),
 
     string_literal: ($) =>
       seq('"', repeat(choice($.escaped_literal, /[^\\"]+/)), '"'),
 
     escaped_literal: () =>
-      choice(
-        new RegExp(`\\\\u${HEX_DIGITS}{4}`),
-        new RegExp(`\\\\U${HEX_DIGITS}{6}`),
-        '\\"',
-        '\\\\',
+      token(
+        choice(
+          new RegExp(`\\\\u${HEX_DIGITS}{4}`),
+          new RegExp(`\\\\U${HEX_DIGITS}{6}`),
+          '\\"',
+          '\\\\',
+        ),
       ),
+
+    _s: () => / */,
+    _ws: () => /[ \n]*/,
   },
 })
