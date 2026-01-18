@@ -1,7 +1,7 @@
 [package]
 name = "tree-sitter-fluent"
 description = "Fluent grammar for tree-sitter"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["David Rios <david.rios.gomes@gmail.com>"]
 license = "MIT"
 readme = "README.md"

@@ -1,6 +1,6 @@
 {
   "name": "tree-sitter-fluent",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Fluent grammar for tree-sitter",
   "repository": "https://github.com/tree-sitter/tree-sitter-fluent",
   "license": "MIT",
@@ -27,28 +27,20 @@
     "*.wasm"
   ],
   "dependencies": {
-    "node-addon-api": "^8.5.0",
-    "node-gyp-build": "^4.8.4"
+    "node-addon-api": "8.5.0",
+    "node-gyp-build": "4.8.4"
   },
   "devDependencies": {
-    "@eslint/js": "^9.39.2",
-    "eslint": "^9.39.2",
-    "eslint-config-prettier": "^10.1.8",
-    "eslint-config-treesitter": "^1.0.2",
-    "eslint-plugin-prettier": "^5.5.4",
-    "globals": "^17.0.0",
-    "prebuildify": "^6.0.1",
-    "prettier": "^3.7.4",
-    "tree-sitter": "^0.22.4",
-    "tree-sitter-cli": "^0.25.10"
-  },
-  "peerDependencies": {
-    "tree-sitter": "^0.22.4"
-  },
-  "peerDependenciesMeta": {
-    "tree-sitter": {
-      "optional": true
-    }
+    "@eslint/js": "9.39.2",
+    "eslint": "9.39.2",
+    "eslint-config-prettier": "10.1.8",
+    "eslint-config-treesitter": "1.0.2",
+    "eslint-plugin-prettier": "5.5.5",
+    "globals": "17.0.0",
+    "prebuildify": "6.0.1",
+    "prettier": "3.7.4",
+    "tree-sitter": "0.25.0",
+    "tree-sitter-cli": "0.26.3"
   },
   "scripts": {
     "install": "node-gyp-build",
