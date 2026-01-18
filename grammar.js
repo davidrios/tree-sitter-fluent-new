@@ -159,6 +159,14 @@ module.exports = grammar({
         prec(1, $.function_reference),
       ),
 
+    selector_expression: ($) =>
+      choice(
+        $.number,
+        $.quoted_text,
+        $.variable,
+        prec(1, $.function_reference),
+      ),
+
     selector_key: ($) => choice($.identifier, $.number),
 
     selector_variant: ($) =>
@@ -174,8 +182,10 @@ module.exports = grammar({
     placeable: ($) =>
       seq(
         alias(/\{[ \n]*/, '{'),
-        $.expression,
-        choice($.selectors, alias(/[ \n]*\}/, '}')),
+        choice(
+          seq($.expression, alias(/[ \n]*\}/, '}')),
+          seq($.selector_expression, $.selectors),
+        ),
       ),
 
     number: () => /\d\d*(\.\d+)?/,
