@@ -25,7 +25,7 @@ module.exports = grammar({
   ],
 
   rules: {
-    source: ($) =>
+    fluent_file: ($) =>
       repeat(
         choice(
           $.comment_block,

@@ -139,6 +139,50 @@
     }
   },
   {
+    "type": "fluent_file",
+    "named": true,
+    "root": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "blank_lines",
+          "named": true
+        },
+        {
+          "type": "comment_block",
+          "named": true
+        },
+        {
+          "type": "file_comment",
+          "named": true
+        },
+        {
+          "type": "group_comment",
+          "named": true
+        },
+        {
+          "type": "message",
+          "named": true
+        },
+        {
+          "type": "term",
+          "named": true
+        },
+        {
+          "type": "unfinished_line",
+          "named": true
+        },
+        {
+          "type": "with_doc_comment",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "function_call",
     "named": true,
     "fields": {},
@@ -486,50 +530,6 @@
       "types": [
         {
           "type": "selector_variant",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "source",
-    "named": true,
-    "root": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "blank_lines",
-          "named": true
-        },
-        {
-          "type": "comment_block",
-          "named": true
-        },
-        {
-          "type": "file_comment",
-          "named": true
-        },
-        {
-          "type": "group_comment",
-          "named": true
-        },
-        {
-          "type": "message",
-          "named": true
-        },
-        {
-          "type": "term",
-          "named": true
-        },
-        {
-          "type": "unfinished_line",
-          "named": true
-        },
-        {
-          "type": "with_doc_comment",
           "named": true
         }
       ]
