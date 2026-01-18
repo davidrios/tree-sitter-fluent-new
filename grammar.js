@@ -90,15 +90,15 @@ module.exports = grammar({
 
     positional_arguments: ($) =>
       seq(
-        $.expression,
-        repeat(seq(alias(token(prec(1, /[ \n]*,[ \n]*/)), ','), $.expression)),
+        $._expression,
+        repeat(seq(alias(token(prec(1, /[ \n]*,[ \n]*/)), ','), $._expression)),
       ),
 
     named_argument: ($) =>
       seq(
         field('id', $.identifier),
         alias(token(prec(1, /[ \n]*:[ \n]*/)), ':'),
-        field('value', $.expression),
+        field('value', $._expression),
       ),
 
     named_arguments: ($) =>
@@ -149,7 +149,7 @@ module.exports = grammar({
         optional($.function_call),
       ),
 
-    expression: ($) =>
+    _expression: ($) =>
       choice(
         alias($.placeable, $.inline_placeable),
         $.number_literal,
@@ -184,7 +184,7 @@ module.exports = grammar({
       seq(
         alias(/\{[ \n]*/, '{'),
         choice(
-          seq($.expression, alias(/[ \n]*\}/, '}')),
+          seq($._expression, alias(/[ \n]*\}/, '}')),
           seq($.selector_expression, $.selectors),
         ),
       ),
