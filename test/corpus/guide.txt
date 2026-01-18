@@ -1,0 +1,503 @@
+=========================
+Special characters
+=========================
+
+opening-brace = This message features an opening curly brace: {"{"}.
+closing-brace = This message features a closing curly brace: {"}"}.
+
+blank-is-removed =     This message starts with no blanks.
+blank-is-preserved = {"    "}This message starts with 4 spaces.
+
+leading-bracket =
+    This message has an opening square bracket
+    at the beginning of the third line:
+    {"["}.
+
+attribute-how-to =
+    To add an attribute to this messages, write
+    {".attr = Value"} on a new line.
+    .attr = An actual attribute (not part of the text value above)
+
+# This is OK, but cryptic and hard to read and edit.
+literal-quote1 = Text in {"\""}double quotes{"\""}.
+
+# This is preferred. Just use the actual double quote character.
+literal-quote2 = Text in "double quotes".
+
+privacy-label = Privacy{"\u00A0"}Policy
+# The dash character is an EM DASH but depending on the font face,
+
+# it might look like an EN DASH.
+which-dash1 = It's a dash—or is it?
+
+# Using a Unicode escape sequence makes the intent clear.
+which-dash2 = It's a dash{"\u2014"}or is it?
+
+# This will work fine, but the codepoint can be considered
+# cryptic by other translators.
+tears-of-joy1 = {"\U01F602"}
+
+# This is preferred. You can instantly see what the Unicode
+# character used here is.
+tears-of-joy2 = 😂
+
+
+---
+
+(fluent_file
+  (message
+    (identifier)
+    (pattern
+      (pure_text)
+      (placeable
+        (string_literal))
+      (pure_text)))
+  (message
+    (identifier)
+    (pattern
+      (pure_text)
+      (placeable
+        (string_literal))
+      (pure_text)))
+  (message
+    (identifier)
+    (pattern
+      (pure_text)))
+  (message
+    (identifier)
+    (pattern
+      (placeable
+        (string_literal))
+      (pure_text)))
+  (message
+    (identifier)
+    (pattern
+      (pure_text)
+      (placeable
+        (string_literal))
+      (pure_text)))
+  (message
+    (identifier)
+    (pattern
+      (pure_text)
+      (placeable
+        (string_literal))
+      (pure_text))
+    (attributes
+      (attribute
+        (identifier)
+        (pattern
+          (pure_text)))))
+  (doc_commented
+    (doc_comment_block)
+    (message
+      (identifier)
+      (pattern
+        (pure_text)
+        (placeable
+          (string_literal
+            (escaped_literal)))
+        (pure_text)
+        (placeable
+          (string_literal
+            (escaped_literal)))
+        (pure_text))))
+  (doc_commented
+    (doc_comment_block)
+    (message
+      (identifier)
+      (pattern
+        (pure_text))))
+  (message
+    (identifier)
+    (pattern
+      (pure_text)
+      (placeable
+        (string_literal
+          (escaped_literal)))
+      (pure_text)))
+  (comment_block)
+  (doc_commented
+    (doc_comment_block)
+    (message
+      (identifier)
+      (pattern
+        (pure_text))))
+  (doc_commented
+    (doc_comment_block)
+    (message
+      (identifier)
+      (pattern
+        (pure_text)
+        (placeable
+          (string_literal
+            (escaped_literal)))
+        (pure_text))))
+  (doc_commented
+    (doc_comment_block)
+    (message
+      (identifier)
+      (pattern
+        (placeable
+          (string_literal
+            (escaped_literal))))))
+  (doc_commented
+    (doc_comment_block)
+    (message
+      (identifier)
+      (pattern
+        (pure_text)))))
+
+=========================
+Multiline text
+=========================
+
+single = Text can be written in a single line.
+
+multi = Text can also span multiple lines
+    as long as each new line is indented
+    by at least one space.
+
+block =
+    Sometimes it's more readable to format
+    multiline text as a "block", which means
+    starting it on a new line. All lines must
+    be indented by at least one space.
+
+leading-spaces =     This message's value starts with the word "This".
+leading-lines =
+
+
+    This message's value starts with the word "This".
+    The blank lines under the identifier are ignored.
+
+blank-lines =
+
+    The blank line above this line is ignored.
+    This is a second line of the value.
+
+    The blank line above this line is preserved.
+
+multiline1 =
+    This message has 4 spaces of indent
+        on the second line of its value.
+
+---
+
+(fluent_file
+  (message
+    (identifier)
+    (pattern
+      (pure_text)))
+  (message
+    (identifier)
+    (pattern
+      (pure_text)))
+  (message
+    (identifier)
+    (pattern
+      (pure_text)))
+  (message
+    (identifier)
+    (pattern
+      (pure_text)))
+  (message
+    (identifier)
+    (pattern
+      (pure_text)))
+  (message
+    (identifier)
+    (pattern
+      (pure_text)))
+  (message
+    (identifier)
+    (pattern
+      (pure_text))))
+
+=========================
+Selectors
+=========================
+
+
+emails =
+    { $unreadEmails ->
+        [one] You have one unread email.
+       *[other] You have { $unreadEmails } unread emails.
+    }
+
+your-score =
+    { NUMBER($score, minimumFractionDigits: 1) ->
+        [0.0]   You scored zero points. What happened?
+       *[other] You scored { NUMBER($score, minimumFractionDigits: 1) } points.
+    }
+
+your-rank = { NUMBER($pos, type: "ordinal") ->
+   [1] You finished first!
+   [one] You finished {$pos}st
+   [two] You finished {$pos}nd
+   [few] You finished {$pos}rd
+  *[other] You finished {$pos}th
+}
+
+
+---
+
+(fluent_file
+  (message
+    (identifier)
+    (pattern
+      (placeable
+        (selector_expression
+          (variable))
+        (selectors
+          (selector_variant
+            (identifier)
+            (pattern
+              (pure_text)))
+          (selector_variant
+            (identifier)
+            (pattern
+              (pure_text)
+              (placeable
+                (variable))
+              (pure_text)))))))
+  (message
+    (identifier)
+    (pattern
+      (placeable
+        (selector_expression
+          (function_reference
+            (function_name)
+            (function_call
+              (positional_arguments
+                (variable))
+              (named_arguments
+                (named_argument
+                  (identifier)
+                  (number_literal))))))
+        (selectors
+          (selector_variant
+            (number_literal)
+            (pattern
+              (pure_text)))
+          (selector_variant
+            (identifier)
+            (pattern
+              (pure_text)
+              (placeable
+                (function_reference
+                  (function_name)
+                  (function_call
+                    (positional_arguments
+                      (variable))
+                    (named_arguments
+                      (named_argument
+                        (identifier)
+                        (number_literal))))))
+              (pure_text)))))))
+  (message
+    (identifier)
+    (pattern
+      (placeable
+        (selector_expression
+          (function_reference
+            (function_name)
+            (function_call
+              (positional_arguments
+                (variable))
+              (named_arguments
+                (named_argument
+                  (identifier)
+                  (string_literal))))))
+        (selectors
+          (selector_variant
+            (number_literal)
+            (pattern
+              (pure_text)))
+          (selector_variant
+            (identifier)
+            (pattern
+              (pure_text)
+              (placeable
+                (variable))
+              (pure_text)))
+          (selector_variant
+            (identifier)
+            (pattern
+              (pure_text)
+              (placeable
+                (variable))
+              (pure_text)))
+          (selector_variant
+            (identifier)
+            (pattern
+              (pure_text)
+              (placeable
+                (variable))
+              (pure_text)))
+          (selector_variant
+            (identifier)
+            (pattern
+              (pure_text)
+              (placeable
+                (variable))
+              (pure_text))))))))
+
+=========================
+Terms
+=========================
+
+# A contrived example to demonstrate how variables
+# can be passed to terms.
+-https = https://{ $host }
+visit = Visit { -https(host: "example.com") } for more information.
+
+-brand-name =
+    { $case ->
+       *[nominative] Firefox
+        [locative] Firefoksie
+    }
+
+# "About Firefox."
+about = Informacje o { -brand-name(case: "locative") }.
+
+-brand-name =
+    { $case ->
+       *[nominative] Firefox
+        [locative] Firefoksie
+    }
+
+# "Firefox has been successfully updated."
+update-successful = { -brand-name } został pomyślnie zaktualizowany.
+
+-brand-name = Aurora
+    .gender = feminine
+
+update-successful =
+    { -brand-name.gender ->
+        [masculine] { -brand-name } został zaktualizowany.
+        [feminine] { -brand-name } została zaktualizowana.
+       *[other] Program { -brand-name } został zaktualizowany.
+    }
+
+
+---
+
+(fluent_file
+  (doc_commented
+    (doc_comment_block)
+    (term
+      (term_identifier)
+      (pattern
+        (pure_text)
+        (placeable
+          (variable)))))
+  (message
+    (identifier)
+    (pattern
+      (pure_text)
+      (placeable
+        (term_reference
+          (term_identifier)
+          (function_call
+            (named_arguments
+              (named_argument
+                (identifier)
+                (string_literal))))))
+      (pure_text)))
+  (term
+    (term_identifier)
+    (pattern
+      (pure_text)
+      (placeable
+        (selector_expression
+          (variable))
+        (selectors
+          (selector_variant
+            (identifier)
+            (pattern
+              (pure_text)))
+          (selector_variant
+            (identifier)
+            (pattern
+              (pure_text)))))))
+  (doc_commented
+    (doc_comment_block)
+    (message
+      (identifier)
+      (pattern
+        (pure_text)
+        (placeable
+          (term_reference
+            (term_identifier)
+            (function_call
+              (named_arguments
+                (named_argument
+                  (identifier)
+                  (string_literal))))))
+        (pure_text))))
+  (term
+    (term_identifier)
+    (pattern
+      (pure_text)
+      (placeable
+        (selector_expression
+          (variable))
+        (selectors
+          (selector_variant
+            (identifier)
+            (pattern
+              (pure_text)))
+          (selector_variant
+            (identifier)
+            (pattern
+              (pure_text)))))))
+  (doc_commented
+    (doc_comment_block)
+    (message
+      (identifier)
+      (pattern
+        (placeable
+          (term_reference
+            (term_identifier)))
+        (pure_text))))
+  (term
+    (term_identifier)
+    (pattern
+      (pure_text))
+    (attributes
+      (attribute
+        (identifier)
+        (pattern
+          (pure_text)))))
+  (message
+    (identifier)
+    (pattern
+      (placeable
+        (selector_expression
+          (term_reference
+            (term_identifier)
+            (identifier)))
+        (selectors
+          (selector_variant
+            (identifier)
+            (pattern
+              (placeable
+                (term_reference
+                  (term_identifier)))
+              (pure_text)))
+          (selector_variant
+            (identifier)
+            (pattern
+              (placeable
+                (term_reference
+                  (term_identifier)))
+              (pure_text)))
+          (selector_variant
+            (identifier)
+            (pattern
+              (pure_text)
+              (placeable
+                (term_reference
+                  (term_identifier)))
+              (pure_text))))))))

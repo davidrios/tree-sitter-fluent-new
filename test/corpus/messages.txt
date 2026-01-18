@@ -1,0 +1,339 @@
+=========================
+Simple messages
+=========================
+
+hello = Hello, World!
+
+---
+
+(fluent_file
+  (message
+    (identifier)
+    (pattern
+      (pure_text))))
+
+=========================
+Multi-line messages
+=========================
+
+about = About Our Software
+description =
+    Loki is a simple micro-blogging
+    app written entirely in <i>HTML5</i>.
+    It uses FTL to implement localization.
+
+---
+
+(fluent_file
+  (message
+    (identifier)
+    (pattern
+      (pure_text)))
+  (message
+    (identifier)
+    (pattern
+      (pure_text))))
+
+====================================
+Placeables that reference variables
+====================================
+
+welcome = Welcome { $user }
+unreadEmails = { $user } has { $emailCount } unread emails.
+
+---
+
+(fluent_file
+  (message
+    (identifier)
+    (pattern
+      (pure_text)
+      (placeable
+        (variable))))
+  (message
+    (identifier)
+    (pattern
+      (placeable
+        (variable))
+      (pure_text)
+      (placeable
+        (variable))
+      (pure_text))))
+
+==========================================
+Placeables that reference other messages
+==========================================
+
+menu-save = Save
+help-menu-save = Click "{ menu-save }" to save the file.
+
+---
+
+(fluent_file
+  (message
+    (identifier)
+    (pattern
+      (pure_text)))
+  (message
+    (identifier)
+    (pattern
+      (pure_text)
+      (placeable
+        (message_reference
+          (identifier)))
+      (pure_text))))
+
+==================
+Terms
+==================
+
+-brand-name = Firefox
+installing = Installing { -brand-name }.
+
+---
+
+(fluent_file
+  (term
+    (term_identifier)
+    (pattern
+      (pure_text)))
+  (message
+    (identifier)
+    (pattern
+      (pure_text)
+      (placeable
+        (term_reference
+          (term_identifier)))
+      (pure_text))))
+
+======================
+Simple selectors
+======================
+
+emails =
+    { $unreadEmails ->
+        [one] You have one unread email.
+       *[other] You have { $unreadEmails } unread emails.
+    }
+
+---
+
+(fluent_file
+  (message
+    (identifier)
+    (pattern
+      (placeable
+        (selector_expression
+          (variable))
+        (selectors
+          (selector_variant
+            (identifier)
+            (pattern
+              (pure_text)))
+          (selector_variant
+            (identifier)
+            (pattern
+              (pure_text)
+              (placeable
+                (variable))
+              (pure_text))))))))
+
+==================================
+Selectors based on function calls
+==================================
+
+your-score =
+    { NUMBER($score, minimumFractionDigits: 1) ->
+        [0.0]   You scored zero points. What happened?
+       *[other] You scored { NUMBER($score, minimumFractionDigits: 1) } points.
+    }
+
+---
+
+(fluent_file
+  (message
+    (identifier)
+    (pattern
+      (placeable
+        (selector_expression
+          (function_reference
+            (function_name)
+            (function_call
+              (positional_arguments
+                (variable))
+              (named_arguments
+                (named_argument
+                  (identifier)
+                  (number_literal))))))
+        (selectors
+          (selector_variant
+            (number_literal)
+            (pattern
+              (pure_text)))
+          (selector_variant
+            (identifier)
+            (pattern
+              (pure_text)
+              (placeable
+                (function_reference
+                  (function_name)
+                  (function_call
+                    (positional_arguments
+                      (variable))
+                    (named_arguments
+                      (named_argument
+                        (identifier)
+                        (number_literal))))))
+              (pure_text))))))))
+
+=============
+Variants
+=============
+
+-brand-name =
+    { $case ->
+       *[nominative] Aurora
+        [genitive] Aurore
+        [dative] Aurori
+        [accusative] Auroro
+        [locative] Aurori
+        [instrumental] Auroro
+    }
+
+about = O { -brand-name(case: "locative") }
+
+---
+
+(fluent_file
+  (term
+    (term_identifier)
+    (pattern
+      (pure_text)
+      (placeable
+        (selector_expression
+          (variable))
+        (selectors
+          (selector_variant
+            (identifier)
+            (pattern
+              (pure_text)))
+          (selector_variant
+            (identifier)
+            (pattern
+              (pure_text)))
+          (selector_variant
+            (identifier)
+            (pattern
+              (pure_text)))
+          (selector_variant
+            (identifier)
+            (pattern
+              (pure_text)))
+          (selector_variant
+            (identifier)
+            (pattern
+              (pure_text)))
+          (selector_variant
+            (identifier)
+            (pattern
+              (pure_text)))))))
+  (message
+    (identifier)
+    (pattern
+      (pure_text)
+      (placeable
+        (term_reference
+          (term_identifier)
+          (function_call
+            (named_arguments
+              (named_argument
+                (identifier)
+                (string_literal)))))))))
+
+==========================
+Attributes
+==========================
+
+login-input = Predefined value
+    .placeholder = example@email.com
+    .aria-label = Login input value
+    .title = Type your login email
+
+---
+
+(fluent_file
+  (message
+    (identifier)
+    (pattern
+      (pure_text))
+    (attributes
+      (attribute
+        (identifier)
+        (pattern
+          (pure_text)))
+      (attribute
+        (identifier)
+        (pattern
+          (pure_text)))
+      (attribute
+        (identifier)
+        (pattern
+          (pure_text))))))
+
+===================================
+Terms and attributes
+===================================
+
+-brand-name = Aurora
+    .gender = feminine
+
+has-updated =
+    { -brand-name.gender ->
+        [masculine] { -brand-name} został zaktualizowany.
+        [feminine] { -brand-name } została zaktualizowana.
+       *[other] Program { -brand-name } został zaktualizowany.
+    }
+
+---
+
+(fluent_file
+  (term
+    (term_identifier)
+    (pattern
+      (pure_text))
+    (attributes
+      (attribute
+        (identifier)
+        (pattern
+          (pure_text)))))
+  (message
+    (identifier)
+    (pattern
+      (placeable
+        (selector_expression
+          (term_reference
+            (term_identifier)
+            (identifier)))
+        (selectors
+          (selector_variant
+            (identifier)
+            (pattern
+              (placeable
+                (term_reference
+                  (term_identifier)))
+              (pure_text)))
+          (selector_variant
+            (identifier)
+            (pattern
+              (placeable
+                (term_reference
+                  (term_identifier)))
+              (pure_text)))
+          (selector_variant
+            (identifier)
+            (pattern
+              (pure_text)
+              (placeable
+                (term_reference
+                  (term_identifier)))
+              (pure_text))))))))

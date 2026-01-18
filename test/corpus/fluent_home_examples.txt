@@ -1,0 +1,432 @@
+=========================
+Simple things are simple.
+=========================
+
+# Simple things are simple.
+hello-user = Hello, {$userName}!
+
+# Complex things are possible.
+shared-photos =
+    {$userName} {$photoCount ->
+        [one] added a new photo
+       *[other] added {$photoCount} new photos
+    } to {$userGender ->
+        [male] his stream
+        [female] her stream
+       *[other] their stream
+    }.
+
+---
+
+(fluent_file
+  (doc_commented
+    (doc_comment_block)
+    (message
+      (identifier)
+      (pattern
+        (pure_text)
+        (placeable
+          (variable))
+        (pure_text))))
+  (doc_commented
+    (doc_comment_block)
+    (message
+      (identifier)
+      (pattern
+        (placeable
+          (variable))
+        (pure_text)
+        (placeable
+          (selector_expression
+            (variable))
+          (selectors
+            (selector_variant
+              (identifier)
+              (pattern
+                (pure_text)))
+            (selector_variant
+              (identifier)
+              (pattern
+                (pure_text)
+                (placeable
+                  (variable))
+                (pure_text)))))
+        (pure_text)
+        (placeable
+          (selector_expression
+            (variable))
+          (selectors
+            (selector_variant
+              (identifier)
+              (pattern
+                (pure_text)))
+            (selector_variant
+              (identifier)
+              (pattern
+                (pure_text)))
+            (selector_variant
+              (identifier)
+              (pattern
+                (pure_text)))))
+        (pure_text)))))
+
+=========================
+Example en
+=========================
+
+## Closing tabs
+
+tabs-close-button = Close
+tabs-close-tooltip = {$tabCount ->
+    [one] Close {$tabCount} tab
+   *[other] Close {$tabCount} tabs
+}
+tabs-close-warning =  {$tabCount ->
+    [one] You are about to close {$tabCount} tab.
+          Are you sure you want to continue?
+   *[other] You are about to close {$tabCount} tabs.
+            Are you sure you want to continue?
+}
+
+## Syncing
+
+-sync-brand-name = Firefox Account
+
+sync-dialog-title = {-sync-brand-name}
+sync-headline-title =
+    {-sync-brand-name}: The best way to bring
+    your data always with you
+sync-signedout-title =
+    Connect with your {-sync-brand-name}
+
+---
+
+(fluent_file
+  (group_comment)
+  (message
+    (identifier)
+    (pattern
+      (pure_text)))
+  (message
+    (identifier)
+    (pattern
+      (placeable
+        (selector_expression
+          (variable))
+        (selectors
+          (selector_variant
+            (identifier)
+            (pattern
+              (pure_text)
+              (placeable
+                (variable))
+              (pure_text)))
+          (selector_variant
+            (identifier)
+            (pattern
+              (pure_text)
+              (placeable
+                (variable))
+              (pure_text)))))))
+  (message
+    (identifier)
+    (pattern
+      (placeable
+        (selector_expression
+          (variable))
+        (selectors
+          (selector_variant
+            (identifier)
+            (pattern
+              (pure_text)
+              (placeable
+                (variable))
+              (pure_text)))
+          (selector_variant
+            (identifier)
+            (pattern
+              (pure_text)
+              (placeable
+                (variable))
+              (pure_text)))))))
+  (group_comment)
+  (term
+    (term_identifier)
+    (pattern
+      (pure_text)))
+  (message
+    (identifier)
+    (pattern
+      (placeable
+        (term_reference
+          (term_identifier)))))
+  (message
+    (identifier)
+    (pattern
+      (placeable
+        (term_reference
+          (term_identifier)))
+      (pure_text)))
+  (message
+    (identifier)
+    (pattern
+      (pure_text)
+      (placeable
+        (term_reference
+          (term_identifier))))))
+
+=========================
+Example it
+=========================
+
+## Closing tabs
+
+tabs-close-button = Chiudi
+tabs-close-tooltip = {$tabCount ->
+    [one] Chiudi {$tabCount} scheda
+   *[other] Chiudi {$tabCount} schede
+}
+tabs-close-warning =  {$tabCount ->
+    [one] Verrà chiusa {$tabCount} scheda. Proseguire?
+   *[other] Verranno chiuse {$tabCount} schede. Proseguire?
+}
+
+## Syncing
+
+-sync-brand-name = {$first ->
+   *[uppercase] Account Firefox
+    [lowercase] account Firefox
+}
+
+sync-dialog-title = {-sync-brand-name}
+sync-headline-title =
+    {-sync-brand-name}: il modo migliore
+    per avere i tuoi dati sempre con te
+sync-signedout-title =
+    Connetti il tuo {-sync-brand-name(first: "lowercase")}
+
+---
+
+(fluent_file
+  (group_comment)
+  (message
+    (identifier)
+    (pattern
+      (pure_text)))
+  (message
+    (identifier)
+    (pattern
+      (placeable
+        (selector_expression
+          (variable))
+        (selectors
+          (selector_variant
+            (identifier)
+            (pattern
+              (pure_text)
+              (placeable
+                (variable))
+              (pure_text)))
+          (selector_variant
+            (identifier)
+            (pattern
+              (pure_text)
+              (placeable
+                (variable))
+              (pure_text)))))))
+  (message
+    (identifier)
+    (pattern
+      (placeable
+        (selector_expression
+          (variable))
+        (selectors
+          (selector_variant
+            (identifier)
+            (pattern
+              (pure_text)
+              (placeable
+                (variable))
+              (pure_text)))
+          (selector_variant
+            (identifier)
+            (pattern
+              (pure_text)
+              (placeable
+                (variable))
+              (pure_text)))))))
+  (group_comment)
+  (term
+    (term_identifier)
+    (pattern
+      (placeable
+        (selector_expression
+          (variable))
+        (selectors
+          (selector_variant
+            (identifier)
+            (pattern
+              (pure_text)))
+          (selector_variant
+            (identifier)
+            (pattern
+              (pure_text)))))))
+  (message
+    (identifier)
+    (pattern
+      (placeable
+        (term_reference
+          (term_identifier)))))
+  (message
+    (identifier)
+    (pattern
+      (placeable
+        (term_reference
+          (term_identifier)))
+      (pure_text)))
+  (message
+    (identifier)
+    (pattern
+      (pure_text)
+      (placeable
+        (term_reference
+          (term_identifier)
+          (function_call
+            (named_arguments
+              (named_argument
+                (identifier)
+                (string_literal)))))))))
+
+=========================
+Example pl
+=========================
+
+## Closing tabs
+
+tabs-close-button = Zamknij
+tabs-close-tooltip = {$tabCount ->
+    [one] Zamknij kartę
+    [few] Zamknij {$tabCount} karty
+   *[many] Zamknij { $tabCount } kart
+}
+tabs-close-warning = {$tabCount ->
+    [few] Zostaną zamknięte {$tabCount} karty.
+          Czy chcesz kontynuować?
+   *[many] Zostanie zamkniętych {$tabCount} kart.
+           Czy chcesz kontynuować?
+}
+
+## Syncing
+
+-sync-brand-name = {$case ->
+   *[nominative] Konto Firefox
+    [genitive] Konta Firefox
+    [accusative] Kontem Firefox
+}
+
+sync-dialog-title = {-sync-brand-name}
+sync-headline-title =
+    {-sync-brand-name}: Najlepszy sposób na to,
+    aby mieć swoje dane zawsze przy sobie
+sync-signedout-title =
+    Zaloguj do {-sync-brand-name(case: "genitive")}
+
+---
+
+(fluent_file
+  (group_comment)
+  (message
+    (identifier)
+    (pattern
+      (pure_text)))
+  (message
+    (identifier)
+    (pattern
+      (placeable
+        (selector_expression
+          (variable))
+        (selectors
+          (selector_variant
+            (identifier)
+            (pattern
+              (pure_text)))
+          (selector_variant
+            (identifier)
+            (pattern
+              (pure_text)
+              (placeable
+                (variable))
+              (pure_text)))
+          (selector_variant
+            (identifier)
+            (pattern
+              (pure_text)
+              (placeable
+                (variable))
+              (pure_text)))))))
+  (message
+    (identifier)
+    (pattern
+      (placeable
+        (selector_expression
+          (variable))
+        (selectors
+          (selector_variant
+            (identifier)
+            (pattern
+              (pure_text)
+              (placeable
+                (variable))
+              (pure_text)))
+          (selector_variant
+            (identifier)
+            (pattern
+              (pure_text)
+              (placeable
+                (variable))
+              (pure_text)))))))
+  (group_comment)
+  (term
+    (term_identifier)
+    (pattern
+      (placeable
+        (selector_expression
+          (variable))
+        (selectors
+          (selector_variant
+            (identifier)
+            (pattern
+              (pure_text)))
+          (selector_variant
+            (identifier)
+            (pattern
+              (pure_text)))
+          (selector_variant
+            (identifier)
+            (pattern
+              (pure_text)))))))
+  (message
+    (identifier)
+    (pattern
+      (placeable
+        (term_reference
+          (term_identifier)))))
+  (message
+    (identifier)
+    (pattern
+      (placeable
+        (term_reference
+          (term_identifier)))
+      (pure_text)))
+  (message
+    (identifier)
+    (pattern
+      (pure_text)
+      (placeable
+        (term_reference
+          (term_identifier)
+          (function_call
+            (named_arguments
+              (named_argument
+                (identifier)
+                (string_literal)))))))))
