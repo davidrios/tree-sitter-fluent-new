@@ -674,6 +674,10 @@
       "members": [
         {
           "type": "SYMBOL",
+          "name": "placeable"
+        },
+        {
+          "type": "SYMBOL",
           "name": "number"
         },
         {

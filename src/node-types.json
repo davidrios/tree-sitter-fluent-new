@@ -105,6 +105,10 @@
           "named": true
         },
         {
+          "type": "placeable",
+          "named": true
+        },
+        {
           "type": "quoted_text",
           "named": true
         },

@@ -151,6 +151,7 @@ module.exports = grammar({
 
     expression: ($) =>
       choice(
+        $.placeable,
         $.number,
         $.quoted_text,
         $.message_reference,
