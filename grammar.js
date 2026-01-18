@@ -41,7 +41,7 @@ module.exports = grammar({
 
     _comment_content: () => /[^\n]+\n/,
     _base_comment: ($) => seq('# ', $._comment_content),
-    _comment_block: ($) => seq(repeat1($._base_comment)),
+    _comment_block: ($) => repeat1($._base_comment),
     comment_block: ($) => seq($._comment_block, $._close_comment_block),
 
     group_comment: ($) => seq('## ', $._comment_content),
@@ -58,15 +58,14 @@ module.exports = grammar({
         field('id', $.identifier),
         / */,
         '=',
-        seq(
-          choice(field('value', $.pattern), $._pattern_skip),
-          field('attributes', alias(repeat($.attribute), $.attributes)),
-        ),
+        choice(field('value', $.pattern), $._pattern_skip),
+        field('attributes', alias(repeat($.attribute), $.attributes)),
       ),
 
     attribute: ($) =>
       seq(
-        seq('.', field('id', $.identifier)),
+        '.',
+        field('id', $.identifier),
         / */,
         '=',
         choice(field('value', $.pattern), $._pattern_skip),
@@ -79,10 +78,8 @@ module.exports = grammar({
         field('id', $.term_identifier),
         / */,
         '=',
-        seq(
-          field('value', $.pattern),
-          field('attributes', alias(repeat($.attribute), $.attributes)),
-        ),
+        field('value', $.pattern),
+        field('attributes', alias(repeat($.attribute), $.attributes)),
       ),
 
     term_identifier: ($) => seq('-', alias($.identifier, 'identifier')),
@@ -120,27 +117,23 @@ module.exports = grammar({
     function_call: ($) =>
       seq(
         optional($._blank_lines),
-        seq(
-          alias(/[ \n]*\([ \n]*/, '('),
-          optional(
-            seq(
-              optional(seq($.positional_arguments, $._end_positional_args)),
-              optional($.named_arguments),
-            ),
+        alias(/[ \n]*\([ \n]*/, '('),
+        optional(
+          seq(
+            optional(seq($.positional_arguments, $._end_positional_args)),
+            optional($.named_arguments),
           ),
-          alias(/[ \n]*\)[ \n]*/, ')'),
         ),
+        alias(/[ \n]*\)[ \n]*/, ')'),
       ),
 
     function_reference: ($) =>
       seq(
-        seq(
-          alias(
-            field('id', token(prec(1, /[A-Z][A-Z0-9_-]*/))),
-            $.function_name,
-          ),
-          / */,
+        alias(
+          field('id', token(prec(1, /[A-Z][A-Z0-9_-]*/))),
+          $.function_name,
         ),
+        / */,
         $.function_call,
       ),
 
