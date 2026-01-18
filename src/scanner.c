@@ -11,6 +11,7 @@ enum TokenType {
   BLANK_LINES,
   UNFINISHED_LINE,
   CLOSE_COMMENT_BLOCK,
+  END_POSITIONAL_ARGS,
 };
 
 typedef struct {
@@ -48,27 +49,6 @@ void tree_sitter_fluent_external_scanner_deserialize(void *payload,
     s->in_pattern = 0;
     s->is_skip = false;
   }
-}
-
-static bool is_close_comment_block(TSLexer *lexer) {
-  bool is_hash = lexer->lookahead == '#';
-
-  if (lexer->lookahead != '\n' && !is_hash) {
-    return false;
-  }
-
-  lexer->mark_end(lexer);
-  lexer->advance(lexer, false);
-
-  if (!is_hash && lexer->lookahead == '#') {
-    lexer->advance(lexer, false);
-  }
-
-  if (lexer->lookahead != ' ') {
-    return true;
-  }
-
-  return false;
 }
 
 // returns true if it stopped at a special stop char
@@ -115,6 +95,69 @@ static bool consume_spaces_and_newlines(TSLexer *lexer) {
   return consume_spaces_and_newlines_count(lexer, &count);
 }
 
+static bool is_close_comment_block(TSLexer *lexer) {
+  bool is_hash = lexer->lookahead == '#';
+
+  if (lexer->lookahead != '\n' && !is_hash) {
+    return false;
+  }
+
+  lexer->mark_end(lexer);
+  lexer->advance(lexer, false);
+
+  if (!is_hash && lexer->lookahead == '#') {
+    lexer->advance(lexer, false);
+  }
+
+  if (lexer->lookahead != ' ') {
+    return true;
+  }
+
+  return false;
+}
+
+static bool consume_identifier(TSLexer *lexer) {
+  if (!((lexer->lookahead >= 'a' && lexer->lookahead <= 'z') ||
+        (lexer->lookahead >= 'A' && lexer->lookahead <= 'Z'))) {
+    return false;
+  }
+
+  lexer->advance(lexer, false);
+
+  while ((lexer->lookahead >= 'a' && lexer->lookahead <= 'z') ||
+         (lexer->lookahead >= 'A' && lexer->lookahead <= 'Z') ||
+         lexer->lookahead == '_' || lexer->lookahead == '-') {
+    lexer->advance(lexer, false);
+  }
+
+  return true;
+}
+
+static bool is_end_positional_args(TSLexer *lexer) {
+  lexer->mark_end(lexer);
+  consume_spaces_and_newlines(lexer);
+
+  if (lexer->lookahead == ')') {
+    return true;
+  }
+
+  if (lexer->lookahead != ',') {
+    return false;
+  }
+  lexer->advance(lexer, false);
+
+  consume_spaces_and_newlines(lexer);
+  lexer->mark_end(lexer);
+
+  if (!consume_identifier(lexer)) {
+    return false;
+  }
+
+  consume_spaces_and_newlines(lexer);
+
+  return lexer->lookahead == ':';
+}
+
 bool tree_sitter_fluent_external_scanner_scan(void *payload, TSLexer *lexer,
                                               const bool *valid_symbols) {
   Scanner *s = (Scanner *)payload;
@@ -143,7 +186,7 @@ bool tree_sitter_fluent_external_scanner_scan(void *payload, TSLexer *lexer,
 
   if (valid_symbols[PATTERN_SKIP]) {
     if (lexer->lookahead == '\n' || lexer->lookahead == ' ') {
-      lexer->log(lexer, "testing pattern skip");
+      lexer->log(lexer, "test pattern skip");
       if (consume_spaces_and_newlines(lexer)) {
         s->is_skip = true;
         lexer->result_symbol = PATTERN_SKIP;
@@ -156,6 +199,7 @@ bool tree_sitter_fluent_external_scanner_scan(void *payload, TSLexer *lexer,
 
   if (valid_symbols[PATTERN_START] && s->in_pattern < MAX_NESTED_PATTERNS &&
       lexer->lookahead != 0) {
+    lexer->log(lexer, "start pattern start");
     s->in_pattern += 1;
     s->is_skip = false;
     while (lexer->lookahead == ' ' || lexer->lookahead == '\t') {
@@ -169,7 +213,7 @@ bool tree_sitter_fluent_external_scanner_scan(void *payload, TSLexer *lexer,
   bool encountered_special = false;
 
   if (valid_symbols[PATTERN_PURE_TEXT] && s->in_pattern && !s->is_skip) {
-    lexer->log(lexer, "testing pure text");
+    lexer->log(lexer, "test pure text");
     bool has_content = false;
 
     while (lexer->lookahead != 0) {
@@ -225,7 +269,7 @@ bool tree_sitter_fluent_external_scanner_scan(void *payload, TSLexer *lexer,
   }
 
   if (valid_symbols[PATTERN_END] && s->in_pattern) {
-    lexer->log(lexer, "testing pattern end");
+    lexer->log(lexer, "test pattern end");
     int count = 0;
     bool stopped = false;
     if (!encountered_special) {
@@ -238,6 +282,7 @@ bool tree_sitter_fluent_external_scanner_scan(void *payload, TSLexer *lexer,
       lexer->log(lexer, "return pattern end");
       return true;
     }
+    lexer->log(lexer, "no pattern end");
   }
 
   if (valid_symbols[BLANK_LINES] &&
@@ -251,6 +296,7 @@ bool tree_sitter_fluent_external_scanner_scan(void *payload, TSLexer *lexer,
   }
 
   if (valid_symbols[UNFINISHED_LINE] && s->in_pattern >= MAX_NESTED_PATTERNS) {
+    lexer->log(lexer, "test UNFINISHED_LINE");
     while (lexer->lookahead != '\n') {
       lexer->advance(lexer, false);
     }
@@ -263,10 +309,24 @@ bool tree_sitter_fluent_external_scanner_scan(void *payload, TSLexer *lexer,
     return true;
   }
 
-  if (valid_symbols[CLOSE_COMMENT_BLOCK] && is_close_comment_block(lexer)) {
-    lexer->result_symbol = CLOSE_COMMENT_BLOCK;
-    lexer->log(lexer, "return CLOSE_COMMENT_BLOCK");
-    return true;
+  if (valid_symbols[CLOSE_COMMENT_BLOCK]) {
+    lexer->log(lexer, "test CLOSE_COMMENT_BLOCK");
+    if (is_close_comment_block(lexer)) {
+      lexer->result_symbol = CLOSE_COMMENT_BLOCK;
+      lexer->log(lexer, "return CLOSE_COMMENT_BLOCK");
+      return true;
+    }
+    lexer->log(lexer, "no CLOSE_COMMENT_BLOCK");
+  }
+
+  if (valid_symbols[END_POSITIONAL_ARGS]) {
+    lexer->log(lexer, "test END_POSITIONAL_ARGS");
+    if (is_end_positional_args(lexer)) {
+      lexer->result_symbol = END_POSITIONAL_ARGS;
+      lexer->log(lexer, "return END_POSITIONAL_ARGS");
+      return true;
+    }
+    lexer->log(lexer, "no END_POSITIONAL_ARGS");
   }
 
   lexer->log(lexer, "scan ended with false");

@@ -70,6 +70,21 @@
     }
   },
   {
+    "type": "doc_comment_block",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "content",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "expression",
     "named": true,
     "fields": {},
@@ -78,7 +93,11 @@
       "required": true,
       "types": [
         {
-          "type": "message_id",
+          "type": "function_reference",
+          "named": true
+        },
+        {
+          "type": "message_reference",
           "named": true
         },
         {
@@ -90,7 +109,7 @@
           "named": true
         },
         {
-          "type": "term_id",
+          "type": "term_reference",
           "named": true
         },
         {
@@ -110,6 +129,59 @@
       "types": [
         {
           "type": "comment_content",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "function_call",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "blank_lines",
+          "named": true
+        },
+        {
+          "type": "end_positional_args",
+          "named": true
+        },
+        {
+          "type": "named_arguments",
+          "named": true
+        },
+        {
+          "type": "positional_arguments",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "function_reference",
+    "named": true,
+    "fields": {
+      "id": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "function_name",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "function_call",
           "named": true
         }
       ]
@@ -177,6 +249,73 @@
     }
   },
   {
+    "type": "message_reference",
+    "named": true,
+    "fields": {
+      "attribute": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "id": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "named_argument",
+    "named": true,
+    "fields": {
+      "id": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "expression",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "named_arguments",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "named_argument",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "pattern",
     "named": true,
     "fields": {},
@@ -217,6 +356,21 @@
         },
         {
           "type": "selectors",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "positional_arguments",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "expression",
           "named": true
         }
       ]
@@ -373,14 +527,45 @@
     }
   },
   {
-    "type": "term_id",
+    "type": "term_identifier",
     "named": true,
     "fields": {}
   },
   {
-    "type": "term_identifier",
+    "type": "term_reference",
     "named": true,
-    "fields": {}
+    "fields": {
+      "attribute": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "id": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "term_identifier",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "function_call",
+          "named": true
+        }
+      ]
+    }
   },
   {
     "type": "variable",
@@ -396,7 +581,7 @@
       "required": true,
       "types": [
         {
-          "type": "comment_block",
+          "type": "doc_comment_block",
           "named": true
         },
         {
@@ -431,6 +616,18 @@
     "named": false
   },
   {
+    "type": "(",
+    "named": false
+  },
+  {
+    "type": ")",
+    "named": false
+  },
+  {
+    "type": ",",
+    "named": false
+  },
+  {
     "type": "-",
     "named": false
   },
@@ -439,7 +636,15 @@
     "named": false
   },
   {
+    "type": ":",
+    "named": false
+  },
+  {
     "type": "=",
+    "named": false
+  },
+  {
+    "type": "[",
     "named": false
   },
   {
@@ -459,6 +664,10 @@
     "named": false
   },
   {
+    "type": "]",
+    "named": false
+  },
+  {
     "type": "blank_lines",
     "named": true
   },
@@ -475,16 +684,20 @@
     "named": true
   },
   {
+    "type": "end_positional_args",
+    "named": true
+  },
+  {
+    "type": "function_name",
+    "named": true
+  },
+  {
+    "type": "identifier",
+    "named": true
+  },
+  {
     "type": "identifier",
     "named": false
-  },
-  {
-    "type": "identifier",
-    "named": true
-  },
-  {
-    "type": "message_id",
-    "named": true
   },
   {
     "type": "number",
@@ -509,6 +722,10 @@
   {
     "type": "unfinished_line",
     "named": true
+  },
+  {
+    "type": "{",
+    "named": false
   },
   {
     "type": "}",

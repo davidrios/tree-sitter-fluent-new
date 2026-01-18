@@ -19,6 +19,7 @@ module.exports = grammar({
     $.blank_lines,
     $.unfinished_line,
     $.close_comment_block,
+    $.end_positional_args,
   ],
 
   rules: {
@@ -85,29 +86,95 @@ module.exports = grammar({
         $.pattern_end,
       ),
 
+    positional_arguments: ($) =>
+      seq(
+        $.expression,
+        repeat(seq(alias(token(prec(1, /[ \n]*,[ \n]*/)), ','), $.expression)),
+      ),
+
+    named_argument: ($) =>
+      seq(
+        field('id', $.identifier),
+        alias(token(prec(1, /[ \n]*:[ \n]*/)), ':'),
+        field('value', $.expression),
+      ),
+
+    named_arguments: ($) =>
+      seq(
+        $.named_argument,
+        repeat(
+          seq(alias(token(prec(1, /[ \n]*,[ \n]*/)), ','), $.named_argument),
+        ),
+      ),
+
+    function_call: ($) =>
+      seq(
+        optional($.blank_lines),
+        seq(
+          alias(/[ \n]*\([ \n]*/, '('),
+          optional(
+            seq(
+              optional(seq($.positional_arguments, $.end_positional_args)),
+              optional($.named_arguments),
+            ),
+          ),
+          alias(/[ \n]*\)[ \n]*/, ')'),
+        ),
+      ),
+
+    function_reference: ($) =>
+      seq(
+        seq(
+          alias(
+            field('id', token(prec(1, /[A-Z][A-Z0-9_-]*/))),
+            $.function_name,
+          ),
+          / */,
+        ),
+        $.function_call,
+      ),
+
+    message_reference: ($) =>
+      seq(
+        field('id', $.identifier),
+        optional(seq('.', field('attribute', $.identifier))),
+      ),
+
+    term_reference: ($) =>
+      seq(
+        field('id', $.term_identifier),
+        optional(seq('.', field('attribute', $.identifier))),
+        optional($.function_call),
+      ),
+
     expression: ($) =>
       choice(
         $.number,
         $.quoted_text,
-        alias($.identifier, $.message_id),
-        alias($.term_identifier, $.term_id),
+        $.message_reference,
+        $.term_reference,
         $.variable,
+        prec(1, $.function_reference),
       ),
 
     selector_key: ($) => choice($.identifier, $.number),
 
     selector_variant: ($) =>
       seq(
-        /\*?\[[ \n]*/,
+        alias(/\*?\[[ \n]*/, '['),
         field('key', $.selector_key),
-        /[\n ]*\]/,
+        alias(/[\n ]*\]/, ']'),
         field('value', $.pattern),
       ),
 
     selectors: ($) => seq(/ *-> *\n[ \n]*/, repeat1($.selector_variant), '}'),
 
     placeable: ($) =>
-      seq(/\{[ \n]*/, $.expression, choice($.selectors, /[ \n]*\}/)),
+      seq(
+        alias(/\{[ \n]*/, '{'),
+        $.expression,
+        choice($.selectors, alias(/[ \n]*\}/, '}')),
+      ),
 
     number: () => /\d\d*(\.\d+)?/,
 
