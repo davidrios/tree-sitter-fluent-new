@@ -9,7 +9,8 @@
 #define FLUENT_DEBUG(...)
 #endif
 
-#define FLUENT_MAX_NESTED_PATTERNS 2
+// Avoid infinite loops with unfinished lines
+#define FLUENT_MAX_NESTED_PATTERNS 10
 
 enum TokenType {
   PATTERN_START,

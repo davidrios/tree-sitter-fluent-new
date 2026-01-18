@@ -151,9 +151,9 @@ module.exports = grammar({
 
     expression: ($) =>
       choice(
-        $.placeable,
-        $.number,
-        $.quoted_text,
+        alias($.placeable, $.inline_placeable),
+        $.number_literal,
+        $.string_literal,
         $.message_reference,
         $.term_reference,
         $.variable,
@@ -162,13 +162,13 @@ module.exports = grammar({
 
     selector_expression: ($) =>
       choice(
-        $.number,
-        $.quoted_text,
+        $.number_literal,
+        $.string_literal,
         $.variable,
         prec(1, $.function_reference),
       ),
 
-    selector_key: ($) => choice($.identifier, $.number),
+    selector_key: ($) => choice($.identifier, $.number_literal),
 
     selector_variant: ($) =>
       seq(
@@ -189,12 +189,16 @@ module.exports = grammar({
         ),
       ),
 
-    number: () => /\d\d*(\.\d+)?/,
+    number_literal: () => /\d\d*(\.\d+)?/,
 
-    quoted_text: ($) =>
-      seq('"', alias(repeat(choice($.quoted_escaped, /[^\\"]+/)), $.text), '"'),
+    string_literal: ($) =>
+      seq(
+        '"',
+        alias(repeat(choice($.escaped_literal, /[^\\"]+/)), $.text),
+        '"',
+      ),
 
-    quoted_escaped: ($) =>
+    escaped_literal: () =>
       choice(
         new RegExp(`\\\\u${HEX_DIGITS}{4}`),
         new RegExp(`\\\\U${HEX_DIGITS}{6}`),
