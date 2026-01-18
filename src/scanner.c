@@ -229,11 +229,11 @@ bool tree_sitter_fluent_external_scanner_scan(void *payload, TSLexer *lexer,
     int count = 0;
     bool stopped = false;
     if (!encountered_special) {
-      lexer->mark_end(lexer);
       bool stopped = consume_spaces_and_newlines_count(lexer, &count);
     }
     if (encountered_special || (count > 0 && stopped)) {
       s->in_pattern -= 1;
+      lexer->mark_end(lexer);
       lexer->result_symbol = PATTERN_END;
       lexer->log(lexer, "return pattern end");
       return true;

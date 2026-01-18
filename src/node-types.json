@@ -36,6 +36,21 @@
     }
   },
   {
+    "type": "attributes",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "attribute",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "comment_block",
     "named": true,
     "fields": {},
@@ -119,12 +134,12 @@
     "type": "message",
     "named": true,
     "fields": {
-      "attribute": {
-        "multiple": true,
+      "attributes": {
+        "multiple": false,
         "required": false,
         "types": [
           {
-            "type": "attribute",
+            "type": "attributes",
             "named": true
           }
         ]
@@ -461,11 +476,11 @@
   },
   {
     "type": "identifier",
-    "named": true
+    "named": false
   },
   {
     "type": "identifier",
-    "named": false
+    "named": true
   },
   {
     "type": "message_id",

@@ -45,7 +45,10 @@ module.exports = grammar({
     file_comment: ($) => seq('### ', $.comment_content),
 
     with_doc_comment: ($) =>
-      seq(alias($._comment_block, $.comment_block), choice($.message, $.term)),
+      seq(
+        alias($._comment_block, $.doc_comment_block),
+        choice($.message, $.term),
+      ),
 
     message: ($) =>
       seq(
@@ -54,7 +57,7 @@ module.exports = grammar({
         '=',
         seq(
           choice(field('value', $.pattern), $.pattern_skip),
-          field('attribute', repeat($.attribute)),
+          field('attributes', alias(repeat($.attribute), $.attributes)),
         ),
       ),
 

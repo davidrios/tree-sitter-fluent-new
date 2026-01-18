@@ -183,13 +183,18 @@
             },
             {
               "type": "FIELD",
-              "name": "attribute",
+              "name": "attributes",
               "content": {
-                "type": "REPEAT",
+                "type": "ALIAS",
                 "content": {
-                  "type": "SYMBOL",
-                  "name": "attribute"
-                }
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "attribute"
+                  }
+                },
+                "named": true,
+                "value": "attributes"
               }
             }
           ]
