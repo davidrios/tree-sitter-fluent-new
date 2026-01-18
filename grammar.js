@@ -7,6 +7,8 @@
 /// <reference types="tree-sitter-cli/dsl" />
 // @ts-check
 
+const HEX_DIGITS = '[0-9a-fA-F]'
+
 module.exports = grammar({
   name: 'fluent',
 
@@ -179,24 +181,14 @@ module.exports = grammar({
     number: () => /\d\d*(\.\d+)?/,
 
     quoted_text: ($) =>
-      seq('"', repeat(choice($.quoted_escaped, /[^\\"]+/)), '"'),
+      seq('"', alias(repeat(choice($.quoted_escaped, /[^\\"]+/)), $.text), '"'),
 
     quoted_escaped: ($) =>
       choice(
-        seq('\\u', $._hexdigit, $._hexdigit, $._hexdigit, $._hexdigit),
-        seq(
-          '\\U',
-          $._hexdigit,
-          $._hexdigit,
-          $._hexdigit,
-          $._hexdigit,
-          $._hexdigit,
-          $._hexdigit,
-        ),
+        new RegExp(`\\\\u${HEX_DIGITS}{4}`),
+        new RegExp(`\\\\U${HEX_DIGITS}{6}`),
         '\\"',
         '\\\\',
       ),
-
-    _hexdigit: () => /[0-9a-fA-F]/,
   },
 })

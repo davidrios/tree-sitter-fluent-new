@@ -822,20 +822,25 @@
           "value": "\""
         },
         {
-          "type": "REPEAT",
+          "type": "ALIAS",
           "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "quoted_escaped"
-              },
-              {
-                "type": "PATTERN",
-                "value": "[^\\\\\"]+"
-              }
-            ]
-          }
+            "type": "REPEAT",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "quoted_escaped"
+                },
+                {
+                  "type": "PATTERN",
+                  "value": "[^\\\\\"]+"
+                }
+              ]
+            }
+          },
+          "named": true,
+          "value": "text"
         },
         {
           "type": "STRING",
@@ -847,62 +852,12 @@
       "type": "CHOICE",
       "members": [
         {
-          "type": "SEQ",
-          "members": [
-            {
-              "type": "STRING",
-              "value": "\\u"
-            },
-            {
-              "type": "SYMBOL",
-              "name": "_hexdigit"
-            },
-            {
-              "type": "SYMBOL",
-              "name": "_hexdigit"
-            },
-            {
-              "type": "SYMBOL",
-              "name": "_hexdigit"
-            },
-            {
-              "type": "SYMBOL",
-              "name": "_hexdigit"
-            }
-          ]
+          "type": "PATTERN",
+          "value": "\\\\u[0-9a-fA-F]{4}"
         },
         {
-          "type": "SEQ",
-          "members": [
-            {
-              "type": "STRING",
-              "value": "\\U"
-            },
-            {
-              "type": "SYMBOL",
-              "name": "_hexdigit"
-            },
-            {
-              "type": "SYMBOL",
-              "name": "_hexdigit"
-            },
-            {
-              "type": "SYMBOL",
-              "name": "_hexdigit"
-            },
-            {
-              "type": "SYMBOL",
-              "name": "_hexdigit"
-            },
-            {
-              "type": "SYMBOL",
-              "name": "_hexdigit"
-            },
-            {
-              "type": "SYMBOL",
-              "name": "_hexdigit"
-            }
-          ]
+          "type": "PATTERN",
+          "value": "\\\\U[0-9a-fA-F]{6}"
         },
         {
           "type": "STRING",
@@ -913,10 +868,6 @@
           "value": "\\\\"
         }
       ]
-    },
-    "_hexdigit": {
-      "type": "PATTERN",
-      "value": "[0-9a-fA-F]"
     }
   },
   "extras": [],

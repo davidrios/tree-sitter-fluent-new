@@ -386,11 +386,11 @@
     "named": true,
     "fields": {},
     "children": {
-      "multiple": true,
+      "multiple": false,
       "required": false,
       "types": [
         {
-          "type": "quoted_escaped",
+          "type": "text",
           "named": true
         }
       ]
@@ -568,6 +568,21 @@
     }
   },
   {
+    "type": "text",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "quoted_escaped",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "variable",
     "named": true,
     "fields": {}
@@ -652,15 +667,7 @@
     "named": false
   },
   {
-    "type": "\\U",
-    "named": false
-  },
-  {
     "type": "\\\\",
-    "named": false
-  },
-  {
-    "type": "\\u",
     "named": false
   },
   {
