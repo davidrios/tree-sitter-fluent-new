@@ -473,6 +473,10 @@
           "named": true
         },
         {
+          "type": "term_reference",
+          "named": true
+        },
+        {
           "type": "variable",
           "named": true
         }
@@ -543,6 +547,16 @@
     "type": "term",
     "named": true,
     "fields": {
+      "attributes": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "attributes",
+            "named": true
+          }
+        ]
+      },
       "id": {
         "multiple": false,
         "required": true,

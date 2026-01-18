@@ -75,7 +75,15 @@ module.exports = grammar({
     identifier: () => /[a-zA-Z][a-zA-Z0-9_-]*/,
 
     term: ($) =>
-      seq(field('id', $.term_identifier), / */, '=', field('value', $.pattern)),
+      seq(
+        field('id', $.term_identifier),
+        / */,
+        '=',
+        seq(
+          field('value', $.pattern),
+          field('attributes', alias(repeat($.attribute), $.attributes)),
+        ),
+      ),
 
     term_identifier: ($) => seq('-', alias($.identifier, 'identifier')),
 
@@ -146,6 +154,7 @@ module.exports = grammar({
       seq(
         field('id', $.term_identifier),
         optional(seq('.', field('attribute', $.identifier))),
+        /[ \n]*/,
         optional($.function_call),
       ),
 
@@ -165,6 +174,7 @@ module.exports = grammar({
         $.number_literal,
         $.string_literal,
         $.variable,
+        $.term_reference,
         prec(1, $.function_reference),
       ),
 
