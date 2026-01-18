@@ -33,21 +33,21 @@ module.exports = grammar({
           $.file_comment,
           $.message,
           $.term,
-          $.with_doc_comment,
+          $.doc_commented,
           $._blank_lines,
           $.unfinished_line,
         ),
       ),
 
-    comment_content: () => /[^\n]+\n/,
-    _base_comment: ($) => seq('# ', alias($.comment_content, $.content)),
+    _comment_content: () => /[^\n]+\n/,
+    _base_comment: ($) => seq('# ', $._comment_content),
     _comment_block: ($) => seq(repeat1($._base_comment)),
     comment_block: ($) => seq($._comment_block, $._close_comment_block),
 
-    group_comment: ($) => seq('## ', $.comment_content),
-    file_comment: ($) => seq('### ', $.comment_content),
+    group_comment: ($) => seq('## ', $._comment_content),
+    file_comment: ($) => seq('### ', $._comment_content),
 
-    with_doc_comment: ($) =>
+    doc_commented: ($) =>
       seq(
         alias($._comment_block, $.doc_comment_block),
         choice($.message, $.term),
@@ -178,7 +178,8 @@ module.exports = grammar({
         field('value', $.pattern),
       ),
 
-    selectors: ($) => seq(/ *-> *\n[ \n]*/, repeat1($.selector_variant), '}'),
+    selectors: ($) =>
+      seq(alias(/ *-> *\n[ \n]*/, '->'), repeat1($.selector_variant), '}'),
 
     placeable: ($) =>
       seq(

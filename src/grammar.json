@@ -29,7 +29,7 @@
           },
           {
             "type": "SYMBOL",
-            "name": "with_doc_comment"
+            "name": "doc_commented"
           },
           {
             "type": "SYMBOL",
@@ -42,7 +42,7 @@
         ]
       }
     },
-    "comment_content": {
+    "_comment_content": {
       "type": "PATTERN",
       "value": "[^\\n]+\\n"
     },
@@ -54,13 +54,8 @@
           "value": "# "
         },
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "comment_content"
-          },
-          "named": true,
-          "value": "content"
+          "type": "SYMBOL",
+          "name": "_comment_content"
         }
       ]
     },
@@ -98,7 +93,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "comment_content"
+          "name": "_comment_content"
         }
       ]
     },
@@ -111,11 +106,11 @@
         },
         {
           "type": "SYMBOL",
-          "name": "comment_content"
+          "name": "_comment_content"
         }
       ]
     },
-    "with_doc_comment": {
+    "doc_commented": {
       "type": "SEQ",
       "members": [
         {
@@ -792,8 +787,13 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "PATTERN",
-          "value": " *-> *\\n[ \\n]*"
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": " *-> *\\n[ \\n]*"
+          },
+          "named": false,
+          "value": "->"
         },
         {
           "type": "REPEAT1",
