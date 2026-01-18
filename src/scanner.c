@@ -296,7 +296,7 @@ bool tree_sitter_fluent_external_scanner_scan(void *payload, TSLexer *lexer,
   }
 
   if (valid_symbols[UNFINISHED_LINE] && s->in_pattern >= MAX_NESTED_PATTERNS) {
-    lexer->log(lexer, "test UNFINISHED_LINE");
+    lexer->log(lexer, "start UNFINISHED_LINE");
     while (lexer->lookahead != '\n') {
       lexer->advance(lexer, false);
     }
