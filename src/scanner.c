@@ -1,7 +1,7 @@
 #include "tree_sitter/alloc.h"
 #include "tree_sitter/parser.h"
 
-#define FLUENT_IS_DEBUG
+// #define FLUENT_IS_DEBUG
 
 #ifdef FLUENT_IS_DEBUG
 #define FLUENT_DEBUG(...) lexer->log(lexer, __VA_ARGS__);

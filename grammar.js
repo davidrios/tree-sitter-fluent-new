@@ -14,14 +14,14 @@ module.exports = grammar({
 
   extras: () => [],
   externals: ($) => [
-    $.pattern_start,
-    $.pattern_pure_text,
-    $.pattern_end,
-    $.pattern_skip,
-    $.blank_lines,
+    $._pattern_start,
+    $.pure_text,
+    $._pattern_end,
+    $._pattern_skip,
+    $._blank_lines,
     $.unfinished_line,
-    $.close_comment_block,
-    $.end_positional_args,
+    $._close_comment_block,
+    $._end_positional_args,
   ],
 
   rules: {
@@ -34,7 +34,7 @@ module.exports = grammar({
           $.message,
           $.term,
           $.with_doc_comment,
-          $.blank_lines,
+          $._blank_lines,
           $.unfinished_line,
         ),
       ),
@@ -42,7 +42,7 @@ module.exports = grammar({
     comment_content: () => /[^\n]+\n/,
     _base_comment: ($) => seq('# ', alias($.comment_content, $.content)),
     _comment_block: ($) => seq(repeat1($._base_comment)),
-    comment_block: ($) => seq($._comment_block, $.close_comment_block),
+    comment_block: ($) => seq($._comment_block, $._close_comment_block),
 
     group_comment: ($) => seq('## ', $.comment_content),
     file_comment: ($) => seq('### ', $.comment_content),
@@ -59,7 +59,7 @@ module.exports = grammar({
         / */,
         '=',
         seq(
-          choice(field('value', $.pattern), $.pattern_skip),
+          choice(field('value', $.pattern), $._pattern_skip),
           field('attributes', alias(repeat($.attribute), $.attributes)),
         ),
       ),
@@ -69,7 +69,7 @@ module.exports = grammar({
         seq('.', field('id', $.identifier)),
         / */,
         '=',
-        choice(field('value', $.pattern), $.pattern_skip),
+        choice(field('value', $.pattern), $._pattern_skip),
       ),
 
     identifier: () => /[a-zA-Z][a-zA-Z0-9_-]*/,
@@ -83,9 +83,9 @@ module.exports = grammar({
 
     pattern: ($) =>
       seq(
-        $.pattern_start,
-        repeat1(choice($.pattern_pure_text, $.placeable)),
-        $.pattern_end,
+        $._pattern_start,
+        repeat1(choice($.pure_text, $.placeable)),
+        $._pattern_end,
       ),
 
     positional_arguments: ($) =>
@@ -111,12 +111,12 @@ module.exports = grammar({
 
     function_call: ($) =>
       seq(
-        optional($.blank_lines),
+        optional($._blank_lines),
         seq(
           alias(/[ \n]*\([ \n]*/, '('),
           optional(
             seq(
-              optional(seq($.positional_arguments, $.end_positional_args)),
+              optional(seq($.positional_arguments, $._end_positional_args)),
               optional($.named_arguments),
             ),
           ),
@@ -168,12 +168,12 @@ module.exports = grammar({
         prec(1, $.function_reference),
       ),
 
-    selector_key: ($) => choice($.identifier, $.number_literal),
+    _selector_key: ($) => choice($.identifier, $.number_literal),
 
     selector_variant: ($) =>
       seq(
         alias(/\*?\[[ \n]*/, '['),
-        field('key', $.selector_key),
+        field('key', $._selector_key),
         alias(/[\n ]*\]/, ']'),
         field('value', $.pattern),
       ),
