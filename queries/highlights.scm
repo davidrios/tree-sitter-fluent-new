@@ -1,80 +1,76 @@
 (comment_block) @comment
+
 (file_comment) @comment.file
+
 (group_comment) @comment.group
 
 (doc_comment_block) @comment.documentation
 
 (number_literal) @number
+
 (string_literal) @string
+
 (escaped_literal) @string.escape
 
 (message
-  id: (identifier) @tag
-  )
+  id: (identifier) @tag)
+
 (message_reference
-  id: (identifier) @tag
-  )
+  id: (identifier) @tag)
+
 (message_reference
-  attribute: (identifier) @tag.attribute
-  )
+  attribute: (identifier) @tag.attribute)
+
 (message
   (attributes
     (attribute
-      id: (identifier) @tag.attribute
-      )))
+      id: (identifier) @tag.attribute)))
 
 (term_reference
-  attribute: (identifier) @function.macro
-  )
+  attribute: (identifier) @function.macro)
+
 (term_identifier) @function.macro
+
 (term
   (attributes
     (attribute
-      id: (identifier) @function.macro
-      )))
+      id: (identifier) @function.macro)))
 
 (variable) @variable.parameter
 
 (selector_variant
-  key: (identifier) @property
-  )
+  key: (identifier) @property)
 
 (function_reference
-  id: (function_name) @function
-  )
+  id: (function_name) @function)
 
 ((function_reference
-   id: (function_name) @function.builtin)
- (#match?
-  @function.builtin
-  "^(NUMBER|DATETIME)$"
-  ))
+  id: (function_name) @function.builtin)
+  (#match? @function.builtin "^(NUMBER|DATETIME)$"))
 
 (named_argument
-  id: (identifier) @variable.parameter
-  )
+  id: (identifier) @variable.parameter)
 
 [
- "["
- "]"
- "("
- ")"
- "{"
- "}"
- ] @punctuation.bracket
+  "["
+  "]"
+  "("
+  ")"
+  "{"
+  "}"
+] @punctuation.bracket
 
 (placeable
   "{" @punctuation.special
-  "}" @punctuation.special
-  )
+  "}" @punctuation.special)
 
 [
- "="
- "->"
- ":"
- ] @operator
+  "="
+  "->"
+  ":"
+] @operator
 
 [
- "."
- ","
- ] @punctuation.delimiter
+  "."
+  ","
+] @punctuation.delimiter
