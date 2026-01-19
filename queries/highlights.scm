@@ -12,6 +12,23 @@
   id: (identifier) @label
   )
 
+(message_reference
+  id: (identifier) @tag
+  attribute: (identifier) @tag.attribute
+  )
+
+(term_reference
+  attribute: (identifier) @attribute
+  )
+
+(variable) @variable
+
+(term_identifier) @type
+
+(attribute
+  id: (identifier) @attribute
+  )
+
 [
  "["
  "]"
