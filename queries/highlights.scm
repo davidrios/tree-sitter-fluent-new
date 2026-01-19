@@ -9,24 +9,49 @@
 (escaped_literal) @string.escape
 
 (message
-  id: (identifier) @label
+  id: (identifier) @tag
   )
-
 (message_reference
   id: (identifier) @tag
+  )
+(message_reference
   attribute: (identifier) @tag.attribute
   )
+(message
+  (attributes
+    (attribute
+      id: (identifier) @tag.attribute
+      )))
 
 (term_reference
-  attribute: (identifier) @attribute
+  attribute: (identifier) @function.macro
+  )
+(term_identifier) @function.macro
+(term
+  (attributes
+    (attribute
+      id: (identifier) @function.macro
+      )))
+
+(variable) @variable.parameter
+
+(selector_variant
+  key: (identifier) @property
   )
 
-(variable) @variable
+(function_reference
+  id: (function_name) @function
+  )
 
-(term_identifier) @type
+((function_reference
+   id: (function_name) @function.builtin)
+ (#match?
+  @function.builtin
+  "^(NUMBER|DATETIME)$"
+  ))
 
-(attribute
-  id: (identifier) @attribute
+(named_argument
+  id: (identifier) @variable.parameter
   )
 
 [
@@ -36,7 +61,7 @@
  ")"
  "{"
  "}"
-] @punctuation.bracket
+ ] @punctuation.bracket
 
 (placeable
   "{" @punctuation.special
@@ -46,10 +71,10 @@
 [
  "="
  "->"
-  ; "*"
-] @operator
+ ":"
+ ] @operator
 
 [
  "."
  ","
-] @punctuation.delimiter
+ ] @punctuation.delimiter
